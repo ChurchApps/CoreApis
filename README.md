@@ -29,13 +29,16 @@ The Core APIs combine the following modules into a single deployable monolith:
 2. **Environment Configuration**
    ```bash
    cp .env.sample .env
-   # Edit .env with your database and API configurations
+   # Edit .env with your database connection strings
+   # Format: mysql://user:password@host:port/database
    ```
 
 3. **Database Setup**
    ```bash
-   # Create databases for each module
-   # Update .env with database connection details
+   # Configure database connection strings in .env:
+   # MEMBERSHIP_DB_URL=mysql://root:password@localhost:3306/membership
+   # ATTENDANCE_DB_URL=mysql://root:password@localhost:3306/attendance
+   # etc.
    npm run initdb
    ```
 

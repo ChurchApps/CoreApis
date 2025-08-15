@@ -1,5 +1,6 @@
 import { Environment } from "../src/shared/helpers/Environment";
 import { ConnectionManager } from "../src/shared/infrastructure/ConnectionManager";
+import { DatabaseUrlParser } from "../src/shared/helpers/DatabaseUrlParser";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -123,7 +124,8 @@ async function ensureDatabaseExists(moduleName: string, dbConfig: any) {
     dbConfig.user,
     dbConfig.password,
     '', // No database specified
-    1
+    1,
+    dbConfig.port || 3306
   );
 
   try {
@@ -213,7 +215,8 @@ async function resetModuleDatabase(moduleName: string, dbConfig: any) {
     dbConfig.user,
     dbConfig.password,
     '', // No database specified
-    1
+    1,
+    dbConfig.port || 3306
   );
 
   try {

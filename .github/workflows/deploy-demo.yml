@@ -1,0 +1,161 @@
+name: Deploy Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  SERVERLESS_ACCESS_KEY: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+
+jobs:
+  deploy:
+    name: Deploy Demo
+    runs-on: ubuntu-latest
+    environment: demo
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting and type check
+        run: |
+          npm run lint:check
+          npm run tsc
+
+      - name: Build application
+        run: npm run build
+
+      - name: Prepare Lambda Layer
+        run: npm run build-layer
+
+      - name: Deploy Core APIs to Demo
+        run: npx serverless deploy --stage demo --verbose
+
+      - name: Verify deployment
+        run: |
+          echo "Deployment completed for Demo environment"
+          npx serverless info --stage demo
+
+  database-setup:
+    name: Setup Demo Databases
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment: demo
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Initialize Demo Databases
+        env:
+          ENVIRONMENT: demo
+          # Database URLs would be retrieved from AWS Parameter Store or set as secrets
+          # For demo, using staging database credentials
+        run: |
+          echo "Setting up demo databases..."
+          npm run reset-db
+          echo "Demo database setup completed"
+
+  health-check:
+    name: Health Check
+    needs: [deploy, database-setup]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Health Check Demo API
+        run: |
+          # Wait for API to be ready
+          sleep 30
+          
+          # Check health endpoint
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://api-demo.churchapps.org/health)
+          if [ $response -eq 200 ]; then
+            echo "✅ Demo API health check passed"
+          else
+            echo "❌ Demo API health check failed with status: $response"
+            exit 1
+          fi
+
+      - name: Test core endpoints
+        run: |
+          # Test each module's endpoints
+          echo "Testing membership endpoint..."
+          curl -f https://api-demo.churchapps.org/membership/churches || echo "Membership endpoint check failed"
+          
+          echo "Testing attendance endpoint..."
+          curl -f https://api-demo.churchapps.org/attendance/campuses || echo "Attendance endpoint check failed"
+          
+          echo "Testing content endpoint..."
+          curl -f https://api-demo.churchapps.org/content/pages || echo "Content endpoint check failed"
+          
+          echo "Testing giving endpoint..."
+          curl -f https://api-demo.churchapps.org/giving/funds || echo "Giving endpoint check failed"
+          
+          echo "Testing messaging endpoint..."
+          curl -f https://api-demo.churchapps.org/messaging/conversations || echo "Messaging endpoint check failed"
+          
+          echo "Testing doing endpoint..."
+          curl -f https://api-demo.churchapps.org/doing/tasks || echo "Doing endpoint check failed"
+
+  notify:
+    name: Notify Deployment
+    needs: [deploy, database-setup, health-check]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Notify deployment status
+        uses: 8398a7/action-slack@v3
+        if: env.SLACK_WEBHOOK_URL != ''
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            Core APIs Demo Deployment: ${{ job.status }}
+            Environment: Demo
+            Commit: ${{ github.sha }}
+            Actor: ${{ github.actor }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

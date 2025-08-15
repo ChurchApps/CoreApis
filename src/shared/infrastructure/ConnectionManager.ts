@@ -13,6 +13,7 @@ export class ConnectionManager {
 
       const pool = mysql.createPool({
         host: dbConfig.host,
+        port: dbConfig.port || 3306,
         user: dbConfig.user,
         password: dbConfig.password,
         database: dbConfig.database,

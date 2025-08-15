@@ -14,7 +14,8 @@
     "reset-db": "ts-node tools/initdb.ts --reset",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "clean": "rimraf dist",
-    "lint": "tslint --project tsconfig.json --fix",
+    "lint": "eslint src/**/*.ts --fix",
+    "lint:check": "eslint src/**/*.ts",
     "tsc": "tsc",
     "copy-assets": "copyfiles -u 1 src/**/*.html src/**/*.css dist/",
     "build-ignore-errors": "npm run clean && (npx tsc || true) && npm run copy-assets",
@@ -27,7 +28,8 @@
     "deploy-staging": "npm run build && serverless deploy --stage staging",
     "deploy-prod": "npm run build && serverless deploy --stage prod",
     "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "migrate-env": "node tools/migrate-env.js"
   },
   "keywords": [
     "church",
@@ -115,8 +117,13 @@
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.13",
     "@types/xml2js": "^0.4.14",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
     "chai": "^5.1.2",
     "copyfiles": "^2.4.1",
+    "eslint": "^9.33.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
     "jest": "^29.7.0",
     "mocha": "^10.8.2",
     "rimraf": "^6.0.1",

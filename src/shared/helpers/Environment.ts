@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { AwsHelper, EnvironmentBase } from "@churchapps/apihelper";
+import { DatabaseUrlParser, DatabaseConfig } from "./DatabaseUrlParser";
 
 export class Environment extends EnvironmentBase {
   // Current environment and server configuration
@@ -108,13 +109,37 @@ export class Environment extends EnvironmentBase {
   }
 
   private static initializeDatabaseConnections(config: any) {
+    // First try to load from environment variables (connection strings)
+    const modules = ['membership', 'attendance', 'content', 'giving', 'messaging', 'doing'];
+    
+    for (const moduleName of modules) {
+      const envVarName = `${moduleName.toUpperCase()}_DB_URL`;
+      const connectionString = process.env[envVarName];
+      
+      if (connectionString) {
+        try {
+          const dbConfig = DatabaseUrlParser.parseConnectionString(connectionString);
+          this.dbConnections.set(moduleName, dbConfig);
+          console.log(`✅ Loaded ${moduleName} database config from ${envVarName}`);
+        } catch (error) {
+          console.error(`❌ Failed to parse ${envVarName}: ${error}`);
+          throw new Error(`Invalid database connection string for ${moduleName}: ${error}`);
+        }
+      }
+    }
+    
+    // Fallback to config file format (legacy support)
     if (config.databases) {
       for (const [moduleName, dbConfig] of Object.entries(config.databases)) {
-        this.dbConnections.set(moduleName, dbConfig);
+        // Only use config file if no environment variable was set
+        if (!this.dbConnections.has(moduleName)) {
+          this.dbConnections.set(moduleName, dbConfig);
+          console.log(`✅ Loaded ${moduleName} database config from config file`);
+        }
       }
     } else {
-      // Fallback for legacy config format
-      if (config.database) {
+      // Fallback for very old legacy config format
+      if (config.database && !this.dbConnections.has('membership')) {
         this.dbConnections.set("membership", config.database);
       }
     }

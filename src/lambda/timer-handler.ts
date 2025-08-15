@@ -1,7 +1,9 @@
+import { Pool } from '@churchapps/apihelper';
 import { ScheduledEvent, Context } from 'aws-lambda';
+
 import { Environment } from '../shared/helpers/Environment';
 import { RepositoryManager } from '../shared/infrastructure/RepositoryManager';
-import { Pool } from '@churchapps/apihelper';
+
 import { NotificationHelper } from '../modules/messaging/helpers/NotificationHelper';
 import { MessagingRepositories } from '../modules/messaging/repositories';
 

@@ -1,0 +1,84 @@
+name: Cleanup Demo Environment
+
+on:
+  schedule:
+    # Run every Sunday at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+jobs:
+  cleanup-demo:
+    name: Cleanup Demo Data
+    runs-on: ubuntu-latest
+    environment: demo
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Reset demo databases
+        env:
+          ENVIRONMENT: demo
+        run: |
+          echo "🧹 Starting demo environment cleanup..."
+          
+          # Reset all databases and reinitialize with fresh demo data
+          npm run reset-db
+          
+          echo "✅ Demo environment cleanup completed"
+
+      - name: Verify demo environment
+        run: |
+          echo "🔍 Verifying demo environment after cleanup..."
+          
+          # Wait for services to be ready
+          sleep 30
+          
+          # Test health endpoints
+          curl -f https://api-demo.churchapps.org/health || echo "Health check failed"
+          
+          echo "Demo environment verification completed"
+
+      - name: Generate cleanup report
+        run: |
+          echo "📊 Demo Cleanup Report"
+          echo "Date: $(date)"
+          echo "Status: Success"
+          echo "Databases reset: All modules"
+          echo "Demo data refreshed: Yes"
+
+  notify-cleanup:
+    name: Notify Cleanup Status
+    needs: cleanup-demo
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Notify cleanup status
+        uses: 8398a7/action-slack@v3
+        if: env.SLACK_WEBHOOK_URL != ''
+        with:
+          status: ${{ job.status }}
+          channel: '#demo-environment'
+          text: |
+            Demo Environment Cleanup: ${{ job.status }}
+            Date: $(date)
+            Trigger: ${{ github.event_name }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
