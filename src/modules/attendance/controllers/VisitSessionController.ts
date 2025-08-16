@@ -38,11 +38,7 @@ export class VisitSessionController extends AttendanceBaseController {
         }
         let existingSession: VisitSession = null;
         if (!newVisit)
-          existingSession = await repos.visitSession.loadByVisitIdSessionId(
-            au.churchId,
-            visit.id,
-            sessionId
-          );
+          existingSession = await repos.visitSession.loadByVisitIdSessionId(au.churchId, visit.id, sessionId);
         if (existingSession == null) {
           const vs: VisitSession = { churchId: au.churchId, sessionId, visitId: visit.id };
           await repos.visitSession.save(vs);
@@ -177,13 +173,8 @@ export class VisitSessionController extends AttendanceBaseController {
         const sessionId = req.query.sessionId.toString();
         const visit: Visit = await repos.visit.loadForSessionPerson(au.churchId, sessionId, personId);
         if (visit !== null) {
-          const existingSession = await repos.visitSession.loadByVisitIdSessionId(
-            au.churchId,
-            visit.id,
-            sessionId
-          );
-          if (existingSession !== null)
-            await repos.visitSession.delete(au.churchId, (existingSession as any).id);
+          const existingSession = await repos.visitSession.loadByVisitIdSessionId(au.churchId, visit.id, sessionId);
+          if (existingSession !== null) await repos.visitSession.delete(au.churchId, (existingSession as any).id);
           const visitSessions: VisitSession[] =
             ((await repos.visitSession.loadByVisitId(au.churchId, visit.id)) as VisitSession[]) || [];
           if (visitSessions.length === 0) await repos.visit.delete(au.churchId, visit.id);

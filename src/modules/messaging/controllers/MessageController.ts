@@ -7,7 +7,6 @@ import { NotificationHelper } from "../helpers/NotificationHelper";
 
 @controller("/messages")
 export class MessageController extends MessagingBaseController {
-
   @httpGet("/:churchId/:conversationId")
   public async loadForConversation(
     @requestParam("churchId") churchId: string,
@@ -44,10 +43,13 @@ export class MessageController extends MessagingBaseController {
       req.body.forEach((message) => {
         promises.push(
           this.messagingRepositories.message.save(message).then(async (savedMessage) => {
-            const conversation = await this.messagingRepositories.conversation.loadById(message.churchId, message.conversationId);
+            const conversation = await this.messagingRepositories.conversation.loadById(
+              message.churchId,
+              message.conversationId
+            );
             const conv = this.messagingRepositories.conversation.convertToModel(conversation);
             await this.messagingRepositories.conversation.updateStats(message.conversationId);
-            
+
             // Send real-time updates
             await DeliveryHelper.sendConversationMessages({
               churchId: message.churchId,
@@ -55,10 +57,10 @@ export class MessageController extends MessagingBaseController {
               action: "message",
               data: savedMessage
             });
-            
+
             // Handle notifications
             await NotificationHelper.checkShouldNotify(conv, savedMessage, message.personId || "anonymous");
-            
+
             return savedMessage;
           })
         );
@@ -80,7 +82,7 @@ export class MessageController extends MessagingBaseController {
       const message = await this.messagingRepositories.message.loadById(au.churchId, id);
       if (message) {
         await this.messagingRepositories.message.delete(au.churchId, id);
-        
+
         // Send real-time delete notification
         await DeliveryHelper.sendConversationMessages({
           churchId: au.churchId,

@@ -16,10 +16,7 @@ export class SessionController extends AttendanceBaseController {
       if (!au.checkAccess(Permissions.attendance.view)) return this.json({}, 401);
       else {
         const repos = await this.getAttendanceRepositories();
-        return repos.session.convertToModel(
-          au.churchId,
-          await repos.session.load(au.churchId, id)
-        );
+        return repos.session.convertToModel(au.churchId, await repos.session.load(au.churchId, id));
       }
     });
   }

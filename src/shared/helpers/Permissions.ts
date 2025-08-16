@@ -5,33 +5,32 @@ import { BasePermissions } from "@churchapps/apihelper";
  * Combines permission definitions from all original microservices
  */
 export class Permissions extends BasePermissions {
-  
   // Membership API permissions
   static groups = {
     edit: { contentType: "Groups", action: "Edit" }
   };
-  
+
   static groupMembers = {
     view: { contentType: "Group Members", action: "View" },
     edit: { contentType: "Group Members", action: "Edit" }
   };
-  
+
   static people = {
     view: { contentType: "People", action: "View" },
     viewMembers: { contentType: "People", action: "View Members" },
     edit: { contentType: "People", action: "Edit" },
     editSelf: { contentType: "People", action: "Edit Self" }
   };
-  
+
   static forms = {
     admin: { contentType: "Forms", action: "Admin" },
     edit: { contentType: "Forms", action: "Edit" }
   };
-  
+
   static plans = {
     edit: { contentType: "Plans", action: "Edit" }
   };
-  
+
   static roles = {
     edit: { contentType: "Roles", action: "Edit" },
     view: { contentType: "Roles", action: "View" }
@@ -48,7 +47,7 @@ export class Permissions extends BasePermissions {
     edit: { contentType: "Attendance", action: "Edit" },
     checkin: { contentType: "Attendance", action: "Checkin" }
   };
-  
+
   static services = {
     edit: { contentType: "Services", action: "Edit" }
   };
@@ -59,7 +58,7 @@ export class Permissions extends BasePermissions {
     edit: { contentType: "Donations", action: "Edit" },
     view: { contentType: "Donations", action: "View" }
   };
-  
+
   static settings = {
     edit: { contentType: "Settings", action: "Edit" },
     view: { contentType: "Settings", action: "View" }
@@ -69,11 +68,11 @@ export class Permissions extends BasePermissions {
   static content = {
     edit: { contentType: "Content", action: "Edit" }
   };
-  
+
   static streamingServices = {
     edit: { contentType: "StreamingServices", action: "Edit" }
   };
-  
+
   static chat = {
     host: { contentType: "Chat", action: "Host" }
   };
@@ -139,7 +138,7 @@ export const permissionsList: IPermission[] = [
     displaySection: "Attendance",
     displayAction: "View Attendance Summary"
   },
-  
+
   // Giving API permissions
   {
     apiName: "GivingApi",
@@ -169,7 +168,7 @@ export const permissionsList: IPermission[] = [
     displaySection: "Donations",
     displayAction: "View Donations"
   },
-  
+
   // Membership API permissions
   {
     apiName: "MembershipApi",
@@ -269,7 +268,7 @@ export const permissionsList: IPermission[] = [
     displaySection: "Content",
     displayAction: "Edit Church Settings"
   },
-  
+
   // Content API permissions
   {
     apiName: "ContentApi",
@@ -309,20 +308,9 @@ export interface IPermission {
   displayAction: string;
 }
 
-export type ApiName =
-  | "MembershipApi"
-  | "GivingApi"
-  | "AttendanceApi"
-  | "MessagingApi"
-  | "DoingApi"
-  | "ContentApi";
+export type ApiName = "MembershipApi" | "GivingApi" | "AttendanceApi" | "MessagingApi" | "DoingApi" | "ContentApi";
 
-export type DisplaySection =
-  | "People and Groups"
-  | "Donations"
-  | "Attendance"
-  | "Forms and Plans"
-  | "Content";
+export type DisplaySection = "People and Groups" | "Donations" | "Attendance" | "Forms and Plans" | "Content";
 
 export type ContentType =
   | "Roles"
@@ -347,13 +335,13 @@ export type ContentType =
   | "Doing"
   | "Admin";
 
-export type Actions = 
-  | "Admin" 
-  | "Edit" 
-  | "View" 
-  | "Edit Self" 
-  | "View Members" 
-  | "View Summary" 
-  | "Checkin" 
+export type Actions =
+  | "Admin"
+  | "Edit"
+  | "View"
+  | "Edit Self"
+  | "View Members"
+  | "View Summary"
+  | "Checkin"
   | "Host"
   | "Edit Settings";

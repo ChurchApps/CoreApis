@@ -267,9 +267,7 @@ export class DonateController extends GivingBaseController {
 
   private logDonation = async (donationData: Donation, fundData: FundDonation[]) => {
     const repos = await this.getGivingRepositories();
-    const batch: DonationBatch = await repos.donationBatch.getOrCreateCurrent(
-      donationData.churchId as string
-    );
+    const batch: DonationBatch = await repos.donationBatch.getOrCreateCurrent(donationData.churchId as string);
     donationData.batchId = batch.id;
     const donation = await repos.donation.save(donationData);
     const promises: Promise<FundDonation>[] = [];

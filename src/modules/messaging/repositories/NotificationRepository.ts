@@ -50,7 +50,7 @@ export class NotificationRepository {
   private async create(notification: Notification): Promise<Notification> {
     notification.id = UniqueIdHelper.shortId();
     const sql =
-      "INSERT INTO notifications (id, churchId, personId, contentType, contentId, timeSent, isNew, message, link, deliveryMethod) VALUES (?, ?, ?, ?, ?, NOW(), 1, ?, ?, ?);"; 
+      "INSERT INTO notifications (id, churchId, personId, contentType, contentId, timeSent, isNew, message, link, deliveryMethod) VALUES (?, ?, ?, ?, ?, NOW(), 1, ?, ?, ?);";
     const params = [
       notification.id,
       notification.churchId,

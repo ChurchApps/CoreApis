@@ -29,10 +29,7 @@ export class FundController extends GivingBaseController {
   ): Promise<any> {
     return this.actionWrapperAnon(req, res, async () => {
       const repos = await this.getGivingRepositories();
-      return repos.fund.convertAllToModel(
-        churchId,
-        (await repos.fund.loadAll(churchId)) as any[]
-      );
+      return repos.fund.convertAllToModel(churchId, (await repos.fund.loadAll(churchId)) as any[]);
     });
   }
 
@@ -40,10 +37,7 @@ export class FundController extends GivingBaseController {
   public async getAll(req: express.Request<{}, {}, null>, res: express.Response): Promise<any> {
     return this.actionWrapper(req, res, async (au) => {
       const repos = await this.getGivingRepositories();
-      return repos.fund.convertAllToModel(
-        au.churchId,
-        (await repos.fund.loadAll(au.churchId)) as any[]
-      );
+      return repos.fund.convertAllToModel(au.churchId, (await repos.fund.loadAll(au.churchId)) as any[]);
     });
   }
 

@@ -8,7 +8,6 @@ import { FileStorageHelper } from "@churchapps/apihelper";
 
 @controller("/sermons")
 export class SermonController extends ContentBaseController {
-
   // @httpGet("/subtitles/:id")
   // public async getSubtitles(
   //   @requestParam("id") id: string,

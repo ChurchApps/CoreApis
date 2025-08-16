@@ -59,7 +59,7 @@ export class Environment extends EnvironmentBase {
 
   // Delivery provider
   static deliveryProvider: string;
-  
+
   // Legacy support for old API environment variables
   static encryptionKey: string;
   static serverPort: number;
@@ -94,14 +94,14 @@ export class Environment extends EnvironmentBase {
 
     // Set current environment and server config
     this.currentEnvironment = environment;
-    this.port = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : (data.port || 8084);
+    this.port = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : data.port || 8084;
     this.socketUrl = data.websocket?.url || this.websocketUrl || "ws://localhost:8087";
-    
+
     // Legacy environment variable support
     this.appEnv = process.env.APP_ENV || process.env.API_ENV || environment;
     this.apiEnv = this.appEnv;
     this.serverPort = this.port;
-    this.socketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : (data.websocket?.port || 8087);
+    this.socketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : data.websocket?.port || 8087;
     this.encryptionKey = process.env.ENCRYPTION_KEY || "";
     this.appName = data.appName || "CoreApi";
 
@@ -128,7 +128,7 @@ export class Environment extends EnvironmentBase {
   private static initializeDatabaseConnections(config: any) {
     // Load from environment variables (connection strings)
     const modules = ["membership", "attendance", "content", "giving", "messaging", "doing"];
-    
+
     // Special case: DoingApi needs access to membership database
     if (process.env.DOING_MEMBERSHIP_DB_URL) {
       try {
@@ -139,11 +139,11 @@ export class Environment extends EnvironmentBase {
         console.error(`❌ Failed to parse DOING_MEMBERSHIP_DB_URL: ${error}`);
       }
     }
-    
+
     for (const moduleName of modules) {
       const envVarName = `${moduleName.toUpperCase()}_DB_URL`;
       const connectionString = process.env[envVarName];
-      
+
       if (connectionString) {
         try {
           const dbConfig = DatabaseUrlParser.parseConnectionString(connectionString);
@@ -155,7 +155,7 @@ export class Environment extends EnvironmentBase {
         }
       }
     }
-    
+
     // Fallback to config file format (legacy support)
     if (config.databases) {
       for (const [moduleName, dbConfig] of Object.entries(config.databases)) {
@@ -175,8 +175,13 @@ export class Environment extends EnvironmentBase {
 
   private static async initializeAppConfigs(config: any, environment: string) {
     // WebSocket configuration
-    this.websocketUrl = process.env.SOCKET_URL || process.env.WEBSOCKET_URL || config.websocket?.url || "ws://localhost:8087";
-    this.websocketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : (process.env.WEBSOCKET_PORT ? parseInt(process.env.WEBSOCKET_PORT) : (config.websocket?.port || 8087));
+    this.websocketUrl =
+      process.env.SOCKET_URL || process.env.WEBSOCKET_URL || config.websocket?.url || "ws://localhost:8087";
+    this.websocketPort = process.env.SOCKET_PORT
+      ? parseInt(process.env.SOCKET_PORT)
+      : process.env.WEBSOCKET_PORT
+        ? parseInt(process.env.WEBSOCKET_PORT)
+        : config.websocket?.port || 8087;
 
     // File storage configuration
     this.fileStore = process.env.FILE_STORE || config.fileStore || "disk";
@@ -197,19 +202,27 @@ export class Environment extends EnvironmentBase {
     this.caddyPort = process.env.CADDY_PORT || (await AwsHelper.readParameter(`/${environment}/caddyPort`));
 
     // Content API specific
-    this.youTubeApiKey = process.env.YOUTUBE_API_KEY || (await AwsHelper.readParameter(`/${environment}/youTubeApiKey`));
+    this.youTubeApiKey =
+      process.env.YOUTUBE_API_KEY || (await AwsHelper.readParameter(`/${environment}/youTubeApiKey`));
     this.pexelsKey = process.env.PEXELS_KEY || (await AwsHelper.readParameter(`/${environment}/pexelsKey`));
     this.vimeoToken = process.env.VIMEO_TOKEN || (await AwsHelper.readParameter(`/${environment}/vimeoToken`));
     this.apiBibleKey = process.env.API_BIBLE_KEY || (await AwsHelper.readParameter(`/${environment}/apiBibleKey`));
-    this.praiseChartsConsumerKey = process.env.PRAISECHARTS_CONSUMER_KEY || (await AwsHelper.readParameter(`/${environment}/praiseChartsConsumerKey`));
-    this.praiseChartsConsumerSecret = process.env.PRAISECHARTS_CONSUMER_SECRET || (await AwsHelper.readParameter(`/${environment}/praiseChartsConsumerSecret`));
+    this.praiseChartsConsumerKey =
+      process.env.PRAISECHARTS_CONSUMER_KEY ||
+      (await AwsHelper.readParameter(`/${environment}/praiseChartsConsumerKey`));
+    this.praiseChartsConsumerSecret =
+      process.env.PRAISECHARTS_CONSUMER_SECRET ||
+      (await AwsHelper.readParameter(`/${environment}/praiseChartsConsumerSecret`));
 
     // Giving API specific
-    this.googleRecaptchaSecretKey = process.env.GOOGLE_RECAPTCHA_SECRET_KEY || (await AwsHelper.readParameter(`/${environment}/recaptcha-secret-key`));
+    this.googleRecaptchaSecretKey =
+      process.env.GOOGLE_RECAPTCHA_SECRET_KEY ||
+      (await AwsHelper.readParameter(`/${environment}/recaptcha-secret-key`));
 
     // AI provider configuration (shared)
     this.aiProvider = process.env.AI_PROVIDER || config.aiProvider || "openrouter";
-    this.openRouterApiKey = process.env.OPENROUTER_API_KEY || (await AwsHelper.readParameter(`/${environment}/openRouterApiKey`));
+    this.openRouterApiKey =
+      process.env.OPENROUTER_API_KEY || (await AwsHelper.readParameter(`/${environment}/openRouterApiKey`));
     this.openAiApiKey = process.env.OPENAI_API_KEY || (await AwsHelper.readParameter(`/${environment}/openAiApiKey`));
   }
 

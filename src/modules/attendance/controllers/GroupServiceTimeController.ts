@@ -26,10 +26,7 @@ export class GroupServiceTimeController extends AttendanceBaseController {
       const repos = await this.getAttendanceRepositories();
       let result = null;
       if (req.query.groupId !== undefined)
-        result = await repos.groupServiceTime.loadWithServiceNames(
-          au.churchId,
-          req.query.groupId.toString()
-        );
+        result = await repos.groupServiceTime.loadWithServiceNames(au.churchId, req.query.groupId.toString());
       else result = await repos.groupServiceTime.loadAll(au.churchId);
       const resultArray = (result as any)?.rows || result || [];
       return repos.groupServiceTime.convertAllToModel(au.churchId, resultArray);

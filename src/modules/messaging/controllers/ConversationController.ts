@@ -6,7 +6,6 @@ import { ArrayHelper, EncryptionHelper } from "@churchapps/apihelper";
 
 @controller("/conversations")
 export class ConversationController extends MessagingBaseController {
-
   private async appendMessages(conversations: Conversation[], churchId: string) {
     if (conversations?.length > 0) {
       const postIds: string[] = [];

@@ -5,7 +5,6 @@ import { Device } from "../models";
 
 @controller("/devices")
 export class DeviceController extends MessagingBaseController {
-
   @httpGet("/:churchId")
   public async loadByChurch(
     @requestParam("churchId") churchId: string,

@@ -3,7 +3,7 @@ import { RepositoryManager } from "./shared/infrastructure/RepositoryManager";
 
 /**
  * Unified route configuration for the CoreApis modular monolith
- * 
+ *
  * This module handles:
  * - Route prefixing for each module (/membership, /attendance, etc.)
  * - Middleware injection for module-specific context
@@ -16,7 +16,7 @@ import { RepositoryManager } from "./shared/infrastructure/RepositoryManager";
  */
 export const MODULE_ROUTES = {
   membership: "/membership",
-  attendance: "/attendance", 
+  attendance: "/attendance",
   content: "/content",
   doing: "/doing",
   giving: "/giving",
@@ -32,10 +32,10 @@ export const createModuleContextMiddleware = (moduleName: string) => {
     try {
       // Set up the database context for this module
       await RepositoryManager.setupModuleContext(moduleName);
-      
+
       // Add module information to request for debugging/logging
       (req as any).module = moduleName;
-      
+
       next();
     } catch (error) {
       console.error(`Error setting up context for module ${moduleName}:`, error);
@@ -56,22 +56,22 @@ export const createModuleContextMiddleware = (moduleName: string) => {
  */
 export const configureModuleRoutes = (app: express.Application) => {
   console.log("Configuring module-specific route contexts...");
-  
+
   // Configure middleware for each module route prefix
   Object.entries(MODULE_ROUTES).forEach(([moduleName, routePrefix]) => {
     const fullPrefix = routePrefix;
     const contextMiddleware = createModuleContextMiddleware(moduleName);
-    
+
     // Apply module context middleware to all routes under this prefix
     app.use(fullPrefix, contextMiddleware);
-    
+
     console.log(`✓ Module context configured for ${moduleName} at ${fullPrefix}`);
   });
-  
+
   // Add module information endpoint
   app.get("/modules", (req, res) => {
     res.json({
-      modules: Object.keys(MODULE_ROUTES).map(module => ({
+      modules: Object.keys(MODULE_ROUTES).map((module) => ({
         name: module,
         prefix: MODULE_ROUTES[module as keyof typeof MODULE_ROUTES],
         status: "active"
@@ -80,7 +80,7 @@ export const configureModuleRoutes = (app: express.Application) => {
       timestamp: new Date().toISOString()
     });
   });
-  
+
   console.log("Module route configuration complete");
 };
 

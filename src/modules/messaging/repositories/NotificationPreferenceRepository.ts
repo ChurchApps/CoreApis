@@ -7,10 +7,7 @@ export class NotificationPreferenceRepository {
   }
 
   public loadByPersonId(churchId: string, personId: string) {
-    return DB.queryOne("SELECT * FROM notificationPreferences WHERE churchId=? AND personId=?", [
-      churchId,
-      personId
-    ]);
+    return DB.queryOne("SELECT * FROM notificationPreferences WHERE churchId=? AND personId=?", [churchId, personId]);
   }
 
   public loadByChurchId(churchId: string) {
@@ -27,7 +24,8 @@ export class NotificationPreferenceRepository {
 
   private async create(notificationPreference: NotificationPreference): Promise<NotificationPreference> {
     notificationPreference.id = UniqueIdHelper.shortId();
-    const sql = "INSERT INTO notificationPreferences (id, churchId, personId, allowPush, emailFrequency) VALUES (?, ?, ?, ?, ?);"; 
+    const sql =
+      "INSERT INTO notificationPreferences (id, churchId, personId, allowPush, emailFrequency) VALUES (?, ?, ?, ?, ?);";
     const params = [
       notificationPreference.id,
       notificationPreference.churchId,
@@ -40,7 +38,8 @@ export class NotificationPreferenceRepository {
   }
 
   private async update(notificationPreference: NotificationPreference) {
-    const sql = "UPDATE notificationPreferences SET personId=?, allowPush=?, emailFrequency=? WHERE id=? AND churchId=?;";
+    const sql =
+      "UPDATE notificationPreferences SET personId=?, allowPush=?, emailFrequency=? WHERE id=? AND churchId=?;";
     const params = [
       notificationPreference.personId,
       notificationPreference.allowPush,

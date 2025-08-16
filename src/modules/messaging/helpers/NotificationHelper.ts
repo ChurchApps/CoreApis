@@ -102,19 +102,17 @@ export class NotificationHelper {
     if (notifications.length > 0) {
       const promises: Promise<Notification>[] = [];
       notifications.forEach((n) => {
-        const promise = NotificationHelper.repositories
-          .notification.save(n)
-          .then(async (notification) => {
-            const method = await NotificationHelper.notifyUserForGeneralNotification(
-              n.churchId,
-              n.personId,
-              n.message,
-              notification.id
-            );
-            notification.deliveryMethod = method;
-            await NotificationHelper.repositories.notification.save(notification);
-            return notification;
-          });
+        const promise = NotificationHelper.repositories.notification.save(n).then(async (notification) => {
+          const method = await NotificationHelper.notifyUserForGeneralNotification(
+            n.churchId,
+            n.personId,
+            n.message,
+            notification.id
+          );
+          notification.deliveryMethod = method;
+          await NotificationHelper.repositories.notification.save(notification);
+          return notification;
+        });
         promises.push(promise);
       });
       const result = await Promise.all(promises);

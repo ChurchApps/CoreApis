@@ -27,7 +27,8 @@ export class PrivateMessageRepository {
 
   private async create(privateMessage: PrivateMessage): Promise<PrivateMessage> {
     privateMessage.id = UniqueIdHelper.shortId();
-    const sql = "INSERT INTO privateMessages (id, churchId, fromPersonId, toPersonId, conversationId, notifyPersonId, deliveryMethod) VALUES (?, ?, ?, ?, ?, ?, ?);"; 
+    const sql =
+      "INSERT INTO privateMessages (id, churchId, fromPersonId, toPersonId, conversationId, notifyPersonId, deliveryMethod) VALUES (?, ?, ?, ?, ?, ?, ?);";
     const params = [
       privateMessage.id,
       privateMessage.churchId,
@@ -42,7 +43,8 @@ export class PrivateMessageRepository {
   }
 
   private async update(privateMessage: PrivateMessage) {
-    const sql = "UPDATE privateMessages SET fromPersonId=?, toPersonId=?, conversationId=?, notifyPersonId=?, deliveryMethod=? WHERE id=? AND churchId=?;";
+    const sql =
+      "UPDATE privateMessages SET fromPersonId=?, toPersonId=?, conversationId=?, notifyPersonId=?, deliveryMethod=? WHERE id=? AND churchId=?;";
     const params = [
       privateMessage.fromPersonId,
       privateMessage.toPersonId,
@@ -76,7 +78,10 @@ export class PrivateMessageRepository {
   }
 
   public loadByConversationId(churchId: string, conversationId: string) {
-    return DB.queryOne("SELECT * FROM privateMessages WHERE churchId=? AND conversationId=?", [churchId, conversationId]);
+    return DB.queryOne("SELECT * FROM privateMessages WHERE churchId=? AND conversationId=?", [
+      churchId,
+      conversationId
+    ]);
   }
 
   public loadUndelivered() {

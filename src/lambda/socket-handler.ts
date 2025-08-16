@@ -27,15 +27,12 @@ async function logMessage(message: string) {
   await wl.flush();
 }
 
-export const handleSocket = async (
-  event: APIGatewayProxyEvent,
-  context: Context
-): Promise<APIGatewayProxyResult> => {
+export const handleSocket = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
   try {
     await initEnv();
 
     const { eventType, connectionId } = event.requestContext as any;
-    
+
     console.log(`WebSocket ${eventType} for connection ${connectionId}`);
 
     switch (eventType) {
@@ -60,7 +57,7 @@ async function handleConnect(event: APIGatewayProxyEvent, _context: Context): Pr
   if (!connectionId) {
     return { statusCode: 400, body: "Missing connection ID" };
   }
-  
+
   try {
     console.log(`Connection established: ${connectionId}`);
     return { statusCode: 200, body: "Connected" };
@@ -75,11 +72,11 @@ async function handleDisconnect(event: APIGatewayProxyEvent, _context: Context):
   if (!connectionId) {
     return { statusCode: 400, body: "Missing connection ID" };
   }
-  
+
   try {
     const _repositories = await RepositoryManager.getRepositories<MessagingRepositories>("messaging");
     await SocketHelper.handleDisconnect(connectionId);
-    
+
     console.log(`Connection disconnected: ${connectionId}`);
     return { statusCode: 200, body: "Disconnected" };
   } catch (error) {
@@ -94,7 +91,7 @@ async function handleMessage(event: APIGatewayProxyEvent, _context: Context): Pr
     return { statusCode: 400, body: "Missing connection ID" };
   }
   const _body = event.body || "";
-  
+
   try {
     const payload = {
       churchId: "",
@@ -102,7 +99,7 @@ async function handleMessage(event: APIGatewayProxyEvent, _context: Context): Pr
       action: "socketId",
       data: connectionId
     };
-    
+
     try {
       const command = new PostToConnectionCommand({
         ConnectionId: connectionId,
@@ -112,7 +109,7 @@ async function handleMessage(event: APIGatewayProxyEvent, _context: Context): Pr
     } catch (e) {
       await logMessage(e instanceof Error ? e.message : String(e));
     }
-    
+
     console.log(`Message processed for ${connectionId}`);
     return { statusCode: 200, body: "Message processed" };
   } catch (error) {

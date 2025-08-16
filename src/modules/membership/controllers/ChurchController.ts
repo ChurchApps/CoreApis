@@ -64,12 +64,12 @@ export class ChurchController extends MembershipBaseController {
           decodeURIComponent(
             // decode unicode characters '\uXXXX'
             JSON.parse(
-              "\"" +
+              '"' +
                 req.body.name
                   .toString()
                   // prepare unicode characters '\uXXXX' for decoding
                   .replace(/%u/g, "\\u") +
-                "\""
+                '"'
             )
           ),
           false
@@ -96,12 +96,12 @@ export class ChurchController extends MembershipBaseController {
           decodeURIComponent(
             // decode unicode characters '\uXXXX'
             JSON.parse(
-              "\"" +
+              '"' +
                 req.query.name
                   .toString()
                   // prepare unicode characters '\uXXXX' for decoding
                   .replace(/%u/g, "\\u") +
-                "\""
+                '"'
             )
           ),
           false
@@ -372,7 +372,7 @@ export class ChurchController extends MembershipBaseController {
       if (errors.length > 0) return this.json({ errors }, 401);
       else {
         // create the church
-        const savedChurch = await this.repositories.church.save(church) as any;
+        const savedChurch = (await this.repositories.church.save(church)) as any;
         church = savedChurch;
 
         // Configure church
@@ -448,8 +448,8 @@ export class ChurchController extends MembershipBaseController {
     const uc = (await PersonHelper.claim(au, churchId)).userChurch;
     const p = (await Repositories.getCurrent().person.load(uc.churchId, uc.personId)) as any;
     const groups: Group[] = (await this.repositories.group.loadForPerson(uc.personId)) as Group[];
-    userChurch.person = { 
-      id: p.id, 
+    userChurch.person = {
+      id: p.id,
       membershipStatus: p.membershipStatus,
       name: {
         first: p.name?.first || "",
@@ -474,15 +474,15 @@ export class ChurchController extends MembershipBaseController {
     let currentApi: Api = null;
     (everyonePermission as any[]).forEach((row: any) => {
       if (result === null) {
-        result = { 
+        result = {
           id: row.churchId,
-          church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName }, 
-          person: { 
-            id: "", 
+          church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName },
+          person: {
+            id: "",
             name: { first: "", last: "" },
             membershipStatus: "Guest"
-          }, 
-          apis: [] 
+          },
+          apis: []
         };
         currentApi = null;
       }
@@ -498,15 +498,15 @@ export class ChurchController extends MembershipBaseController {
 
     if (result === null) {
       const church: Church = await this.repositories.church.loadById(churchId);
-      result = { 
+      result = {
         id: church.id,
-        church: { id: church.id, subDomain: church.subDomain, name: church.name }, 
-        person: { 
-          id: "", 
+        church: { id: church.id, subDomain: church.subDomain, name: church.name },
+        person: {
+          id: "",
           name: { first: "", last: "" },
           membershipStatus: "Guest"
-        }, 
-        apis: [] 
+        },
+        apis: []
       };
     }
 

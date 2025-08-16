@@ -38,7 +38,7 @@ export class MembershipRepositories {
   public formSubmission: FormSubmissionRepository;
   public question: QuestionRepository;
   public memberPermission: MemberPermissionRepository;
-  
+
   public accessLog: AccessLogRepository;
   public church: ChurchRepository;
   public domain: DomainRepository;
@@ -49,11 +49,11 @@ export class MembershipRepositories {
   public userChurch: UserChurchRepository;
   public setting: SettingRepository;
   public visibilityPreference: VisibilityPreferenceRepository;
-  
+
   public oAuthToken: OAuthTokenRepository;
   public oAuthCode: OAuthCodeRepository;
   public oAuthClient: OAuthClientRepository;
-  
+
   public clientError: ClientErrorRepository;
 
   constructor() {
@@ -66,7 +66,7 @@ export class MembershipRepositories {
     this.formSubmission = new FormSubmissionRepository();
     this.question = new QuestionRepository();
     this.memberPermission = new MemberPermissionRepository();
-    
+
     this.accessLog = new AccessLogRepository();
     this.church = new ChurchRepository();
     this.domain = new DomainRepository();
@@ -77,11 +77,11 @@ export class MembershipRepositories {
     this.userChurch = new UserChurchRepository();
     this.setting = new SettingRepository();
     this.visibilityPreference = new VisibilityPreferenceRepository();
-    
+
     this.oAuthToken = new OAuthTokenRepository();
     this.oAuthCode = new OAuthCodeRepository();
     this.oAuthClient = new OAuthClientRepository();
-    
+
     this.clientError = new ClientErrorRepository();
   }
 }

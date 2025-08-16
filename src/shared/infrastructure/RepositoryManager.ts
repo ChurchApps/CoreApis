@@ -20,27 +20,27 @@ export class RepositoryManager {
       case "attendance":
         const { AttendanceRepositories } = await import("../../modules/attendance");
         return new AttendanceRepositories();
-      
+
       case "content":
         const { ContentRepositories } = await import("../../modules/content");
         return new ContentRepositories();
-      
+
       case "doing":
         const { DoingRepositories } = await import("../../modules/doing");
         return new DoingRepositories();
-      
+
       case "giving":
         const { GivingRepositories } = await import("../../modules/giving");
         return new GivingRepositories();
-      
+
       case "membership":
         const { MembershipRepositories } = await import("../../modules/membership");
         return new MembershipRepositories();
-      
+
       case "messaging":
         const { MessagingRepositories } = await import("../../modules/messaging");
         return new MessagingRepositories();
-      
+
       default:
         throw new Error(`Unknown module: ${moduleName}`);
     }
@@ -48,7 +48,7 @@ export class RepositoryManager {
 
   /**
    * Legacy method to support existing getCurrent() pattern
-   * For modules that use Repositories.getCurrent(), this provides 
+   * For modules that use Repositories.getCurrent(), this provides
    * the same interface while using the shared infrastructure
    */
   static async getCurrentForModule(moduleName: string): Promise<any> {

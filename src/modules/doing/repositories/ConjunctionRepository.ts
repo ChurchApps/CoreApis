@@ -25,8 +25,7 @@ export class ConjunctionRepository {
   }
 
   private async update(conjunction: Conjunction) {
-    const sql =
-      "UPDATE conjunctions SET automationId=?, parentId=?, groupType=? WHERE id=? and churchId=?";
+    const sql = "UPDATE conjunctions SET automationId=?, parentId=?, groupType=? WHERE id=? and churchId=?";
     const params = [
       conjunction.automationId,
       conjunction.parentId,

@@ -1,7 +1,15 @@
 export * from "@churchapps/apihelper";
 
 // Import shared helpers that were moved to the shared infrastructure
-export { Environment, Permissions, permissionsList, type ApiName, type DisplaySection, type ContentType, type Actions } from "../../../shared/helpers";
+export {
+  Environment,
+  Permissions,
+  permissionsList,
+  type ApiName,
+  type DisplaySection,
+  type ContentType,
+  type Actions
+} from "../../../shared/helpers";
 
 // Module-specific helpers
 export { CaddyHelper } from "./CaddyHelper";

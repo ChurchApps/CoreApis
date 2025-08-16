@@ -71,22 +71,25 @@ const updateEmailValidation = [
   body("email").isEmail().trim().normalizeEmail({ gmail_remove_dots: false }).withMessage("enter a valid email address")
 ];
 
-@controller("/users")
+@controller("/membership/users")
 export class UserController extends MembershipBaseController {
   @httpPost("/login")
   public async login(req: express.Request<{}, {}, LoginRequest>, res: express.Response): Promise<any> {
     try {
+      // Initialize repositories
+      const repositories = await this.getMembershipRepositories();
+
       let user: User = null;
       if (req.body.jwt !== undefined && req.body.jwt !== "") {
-        user = await AuthenticatedUser.loadUserByJwt(req.body.jwt, this.repositories);
+        user = await AuthenticatedUser.loadUserByJwt(req.body.jwt, repositories);
       } else if (req.body.authGuid !== undefined && req.body.authGuid !== "") {
-        user = await this.repositories.user.loadByAuthGuid(req.body.authGuid);
+        user = await repositories.user.loadByAuthGuid(req.body.authGuid);
         if (user !== null) {
           // user.authGuid = "";
-          // await this.repositories.user.save(user);
+          // await repositories.user.save(user);
         }
       } else {
-        user = await this.repositories.user.loadByEmail(req.body.email.trim());
+        user = await repositories.user.loadByEmail(req.body.email.trim());
         if (user !== null) {
           if (!bcrypt.compareSync(req.body.password, user.password?.toString() || "")) user = null;
         }
@@ -107,7 +110,7 @@ export class UserController extends MembershipBaseController {
         if (result === null) return this.denyAccess(["No permissions"]);
         else {
           user.lastLogin = new Date();
-          this.repositories.user.save(user);
+          repositories.user.save(user);
           return this.json(result, 200);
         }
       }
@@ -118,14 +121,17 @@ export class UserController extends MembershipBaseController {
   }
 
   private async getUserChurches(id: string): Promise<LoginUserChurch[]> {
+    // Initialize repositories
+    const repositories = await this.getMembershipRepositories();
+
     // Load user churches via Roles
-    const roleUserChurches = await this.repositories.rolePermission.loadForUser(id, true); // Set to true so churches[0] is always a real church.  Not sre why it was false before.  If we need to change this make it a param on the login request
+    const roleUserChurches = await repositories.rolePermission.loadForUser(id, true); // Set to true so churches[0] is always a real church.  Not sre why it was false before.  If we need to change this make it a param on the login request
 
     UserHelper.replaceDomainAdminPermissions(roleUserChurches);
     UserHelper.addAllReportingPermissions(roleUserChurches);
 
     // Load churches via userChurches relationships
-    const userChurches: LoginUserChurch[] = await this.repositories.church.loadForUser(id);
+    const userChurches: LoginUserChurch[] = await repositories.church.loadForUser(id);
 
     userChurches.forEach((uc) => {
       if (!ArrayHelper.getOne(roleUserChurches, "church.id", uc.church.id)) roleUserChurches.push(uc);

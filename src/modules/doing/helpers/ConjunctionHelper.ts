@@ -6,10 +6,7 @@ import { ConditionHelper } from "./ConditionHelper";
 export class ConjunctionHelper {
   public static async getPeopleIds(automation: Automation, repositories?: DoingRepositories) {
     const repos = repositories || new DoingRepositories();
-    const conjunctions = await repos.conjunction.loadForAutomation(
-      automation.churchId || "",
-      automation.id || ""
-    );
+    const conjunctions = await repos.conjunction.loadForAutomation(automation.churchId || "", automation.id || "");
     let conditions = (await repos.condition.loadForAutomation(
       automation.churchId || "",
       automation.id || ""

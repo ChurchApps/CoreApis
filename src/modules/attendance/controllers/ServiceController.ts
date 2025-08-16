@@ -24,10 +24,7 @@ export class ServiceController extends AttendanceBaseController {
   ): Promise<unknown> {
     return this.actionWrapper(req, res, async (au) => {
       const repos = await this.getAttendanceRepositories();
-      return repos.service.convertToModel(
-        au.churchId,
-        await repos.service.load(au.churchId, id)
-      );
+      return repos.service.convertToModel(au.churchId, await repos.service.load(au.churchId, id));
     });
   }
 

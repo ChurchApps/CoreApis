@@ -84,8 +84,8 @@ export class OAuthController extends MembershipBaseController {
         const loginUserChurch: LoginUserChurch = {
           id: church.id,
           church: { id: church.id, name: church.churchName, subDomain: church.subDomain },
-          person: { 
-            id: userChurch.personId, 
+          person: {
+            id: userChurch.personId,
             membershipStatus: "Guest",
             name: { first: "", last: "" }
           },
@@ -127,8 +127,8 @@ export class OAuthController extends MembershipBaseController {
         const loginUserChurch: LoginUserChurch = {
           id: church.id,
           church: { id: church.id, name: church.churchName, subDomain: church.subDomain },
-          person: { 
-            id: userChurch.personId, 
+          person: {
+            id: userChurch.personId,
             membershipStatus: "Guest",
             name: { first: "", last: "" }
           },

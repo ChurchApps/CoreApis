@@ -6,7 +6,6 @@ import { Environment } from "../helpers/Environment";
  * Extends the base provider from @churchapps/apihelper with module-specific logic
  */
 export class CustomAuthProvider extends BaseAuthProvider {
-  
   /**
    * Constructor for CustomAuthProvider
    */
@@ -40,7 +39,7 @@ export class CustomAuthProvider extends BaseAuthProvider {
     // Add module-specific validation logic here as needed
     // For now, all authenticated users can access all modules
     // This can be refined during migration based on specific requirements
-    
+
     return true;
   }
 
@@ -59,13 +58,13 @@ export class CustomAuthProvider extends BaseAuthProvider {
       // Use the base class's validation logic if available
       // For now, implement basic JWT validation
       if (!token) return false;
-      
+
       // Basic token structure validation
       if (typeof token === "string") {
         const parts = token.split(".");
         return parts.length === 3; // Basic JWT structure check
       }
-      
+
       return !!token; // Assume token object is valid for now
     } catch (error) {
       console.error("Token validation error:", error);

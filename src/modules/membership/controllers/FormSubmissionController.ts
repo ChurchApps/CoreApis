@@ -132,9 +132,9 @@ export class FormSubmissionController extends MembershipBaseController {
             formSubmission.answers.forEach((a) => {
               if (q.id === a.questionId) {
                 contentRows.push(
-                  "<tr><th style=\"font-size: 16px\" width=\"30%\">" +
+                  '<tr><th style="font-size: 16px" width="30%">' +
                     q.title +
-                    "</th><td style=\"font-size: 15px\">" +
+                    '</th><td style="font-size: 15px">' +
                     a.value +
                     "</td></tr>"
                 );
@@ -143,7 +143,7 @@ export class FormSubmissionController extends MembershipBaseController {
           });
 
           const contents =
-            "<table role=\"presentation\" style=\"text-align: left;\" cellspacing=\"8\" width=\"80%\"><tablebody>" +
+            '<table role="presentation" style="text-align: left;" cellspacing="8" width="80%"><tablebody>' +
             contentRows.join(" ") +
             "</tablebody></table>";
           const promises: Promise<any>[] = [];

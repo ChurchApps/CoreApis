@@ -26,7 +26,7 @@ export class MembershipBaseController extends BaseController {
   public async formAccess(au: AuthenticatedUser, formId: string, access?: string): Promise<boolean> {
     if (au.checkAccess(Permissions.forms.admin)) return true;
     if (!formId) return false;
-    
+
     const repos = await this.getMembershipRepositories();
     const formData = (await repos.form.loadWithMemberPermissions(au.churchId, formId, au.personId)) as any;
     if (formData?.contentType === "form")

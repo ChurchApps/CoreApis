@@ -25,13 +25,7 @@ export class AttendanceRecordController extends AttendanceBaseController {
         const serviceId = req.query.serviceId === undefined ? "" : req.query.serviceId.toString();
         const serviceTimeId = req.query.serviceTimeId === undefined ? "" : req.query.serviceTimeId.toString();
         const groupId = req.query.groupId === undefined ? "" : req.query.groupId.toString();
-        const data = await repos.attendance.loadTrend(
-          au.churchId,
-          campusId,
-          serviceId,
-          serviceTimeId,
-          groupId
-        );
+        const data = await repos.attendance.loadTrend(au.churchId, campusId, serviceId, serviceTimeId, groupId);
         return data;
       }
     });
@@ -70,12 +64,7 @@ export class AttendanceRecordController extends AttendanceBaseController {
         } else if (serviceId !== "") {
           result = await repos.attendance.loadByServiceId(au.churchId, serviceId, startDate, endDate);
         } else if (serviceTimeId !== "") {
-          result = await repos.attendance.loadByServiceTimeId(
-            au.churchId,
-            serviceTimeId,
-            startDate,
-            endDate
-          );
+          result = await repos.attendance.loadByServiceTimeId(au.churchId, serviceTimeId, startDate, endDate);
         } else if (groupId !== "") {
           result = await repos.attendance.loadByGroupId(au.churchId, groupId, startDate, endDate);
         } else {

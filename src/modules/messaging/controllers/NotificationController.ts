@@ -6,7 +6,6 @@ import { NotificationHelper } from "../helpers/NotificationHelper";
 
 @controller("/notifications")
 export class NotificationController extends MessagingBaseController {
-
   @httpGet("/:churchId/person/:personId")
   public async loadByPerson(
     @requestParam("churchId") churchId: string,

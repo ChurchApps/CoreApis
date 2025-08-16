@@ -30,7 +30,7 @@ export class ConnectionManager {
   }
 
   static async closeAll(): Promise<void> {
-    const closePromises = Array.from(this.pools.values()).map(pool => pool.end());
+    const closePromises = Array.from(this.pools.values()).map((pool) => pool.end());
     await Promise.all(closePromises);
     this.pools.clear();
   }

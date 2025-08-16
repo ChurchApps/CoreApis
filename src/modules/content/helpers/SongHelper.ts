@@ -118,7 +118,10 @@ export class SongHelper {
   private static async findExistingSongByCCLI(churchId: string, ccliNumber?: string): Promise<SongDetail | null> {
     if (!ccliNumber) return null;
 
-    const existingByCCLI = await ContentRepositories.getCurrent().songDetailLink.loadByServiceAndKey("CCLI", ccliNumber);
+    const existingByCCLI = await ContentRepositories.getCurrent().songDetailLink.loadByServiceAndKey(
+      "CCLI",
+      ccliNumber
+    );
     if (existingByCCLI) {
       const songDetail = await ContentRepositories.getCurrent().songDetail.load(existingByCCLI.songDetailId);
       if (songDetail) {
@@ -133,7 +136,10 @@ export class SongHelper {
   }
 
   private static async findExistingSongByGeniusId(churchId: string, geniusId: string): Promise<Arrangement | null> {
-    const existingByGenius = await ContentRepositories.getCurrent().songDetailLink.loadByServiceAndKey("Genius", geniusId);
+    const existingByGenius = await ContentRepositories.getCurrent().songDetailLink.loadByServiceAndKey(
+      "Genius",
+      geniusId
+    );
     if (existingByGenius) {
       const songDetail = await ContentRepositories.getCurrent().songDetail.load(existingByGenius.songDetailId);
       if (songDetail) {
@@ -154,7 +160,9 @@ export class SongHelper {
     ccliNumber?: string,
     geniusId?: string
   ): Promise<SongDetail> {
-    let songDetail = await ContentRepositories.getCurrent().songDetail.loadByPraiseChartsId(praiseChartsResult.praiseChartsId);
+    let songDetail = await ContentRepositories.getCurrent().songDetail.loadByPraiseChartsId(
+      praiseChartsResult.praiseChartsId
+    );
 
     if (!songDetail) {
       // Create new song detail

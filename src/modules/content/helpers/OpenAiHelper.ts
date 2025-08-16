@@ -154,4 +154,3 @@ export class OpenAiHelper {
     return { outline: completion };
   }
 }
-

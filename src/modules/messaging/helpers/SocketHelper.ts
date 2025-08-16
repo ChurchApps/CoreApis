@@ -15,7 +15,7 @@ export class SocketHelper {
     SocketHelper.repositories = repositories;
     const port = Environment.websocketPort;
     console.log(`SocketHelper: Initializing with port ${port}, deliveryProvider: ${Environment.deliveryProvider}`);
-    
+
     // Only start WebSocket server in local development mode
     if (port > 0 && Environment.deliveryProvider === "local") {
       try {
@@ -43,7 +43,7 @@ export class SocketHelper {
 
   static handleDisconnect = async (socketId: string) => {
     if (!SocketHelper.repositories) return;
-    
+
     const connections = await SocketHelper.repositories.connection.loadBySocketId(socketId);
     await SocketHelper.repositories.connection.deleteForSocket(socketId);
     connections.forEach((c: Connection) => {

@@ -179,7 +179,7 @@ export class StripeHelper {
 
   // Note: These methods need to be updated to use dependency injection
   // instead of static Repositories.getCurrent() calls
-  
+
   static async logEvent(churchId: string, stripeEvent: any, eventData: any, givingRepositories: any) {
     const { billing_reason, status, failure_message, outcome, created, customer } = eventData;
     let message = billing_reason + " " + status;

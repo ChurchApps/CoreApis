@@ -58,12 +58,7 @@ export class VisitController extends AttendanceBaseController {
             ? []
             : repos.visit.convertAllToModel(
                 au.churchId,
-                (await repos.visit.loadByServiceDatePeopleIds(
-                  au.churchId,
-                  serviceId,
-                  lastDate,
-                  peopleIds
-                )) as any
+                (await repos.visit.loadByServiceDatePeopleIds(au.churchId, serviceId, lastDate, peopleIds)) as any
               );
 
         const visitIds: string[] = [];
@@ -152,12 +147,7 @@ export class VisitController extends AttendanceBaseController {
             ? []
             : repos.visit.convertAllToModel(
                 au.churchId,
-                (await repos.visit.loadByServiceDatePeopleIds(
-                  au.churchId,
-                  serviceId,
-                  currentDate,
-                  peopleIds
-                )) as any
+                (await repos.visit.loadByServiceDatePeopleIds(au.churchId, serviceId, currentDate, peopleIds)) as any
               );
         if (existingVisits.length > 0) {
           existingVisits.forEach((v) => existingVisitIds.push(v.id));

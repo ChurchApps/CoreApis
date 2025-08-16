@@ -5,10 +5,10 @@ import { MODULE_ROUTES } from "./routes";
 const startServer = async () => {
   try {
     console.log("🚀 Starting CoreApis modular monolith...");
-    
+
     const app = await createApp();
     const port = Environment.port || process.env.PORT || 8084;
-    
+
     const server = app.listen(port, () => {
       console.log("");
       console.log("✅ CoreApis server started successfully!");
@@ -38,7 +38,6 @@ const startServer = async () => {
 
     process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
     process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);

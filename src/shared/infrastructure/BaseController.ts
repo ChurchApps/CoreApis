@@ -59,7 +59,7 @@ export abstract class BaseController extends CustomBaseController {
     return {
       success: false,
       message: "Validation failed",
-      errors: errors.map(e => e.message)
+      errors: errors.map((e) => e.message)
     };
   }
 
@@ -98,8 +98,8 @@ export abstract class BaseController extends CustomBaseController {
   protected validateRequired(data: any, requiredFields: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
     const missingFields = ValidationHelper.validateRequired(data, requiredFields);
-    
-    missingFields.forEach(message => {
+
+    missingFields.forEach((message) => {
       const field = message.split(" ")[0];
       errors.push({
         code: "REQUIRED_FIELD",
@@ -119,11 +119,11 @@ export abstract class BaseController extends CustomBaseController {
     if (typeof data === "string") {
       return ValidationHelper.sanitizeString(data);
     }
-    
+
     if (Array.isArray(data)) {
-      return data.map(item => this.sanitizeInput(item));
+      return data.map((item) => this.sanitizeInput(item));
     }
-    
+
     if (data && typeof data === "object") {
       const sanitized: any = {};
       for (const [key, value] of Object.entries(data)) {
@@ -131,7 +131,7 @@ export abstract class BaseController extends CustomBaseController {
       }
       return sanitized;
     }
-    
+
     return data;
   }
 
@@ -140,13 +140,13 @@ export abstract class BaseController extends CustomBaseController {
    */
   protected ensureChurchId(data: any, churchId: string): any {
     if (Array.isArray(data)) {
-      return data.map(item => ({ ...item, churchId }));
+      return data.map((item) => ({ ...item, churchId }));
     }
-    
+
     if (data && typeof data === "object") {
       return { ...data, churchId };
     }
-    
+
     return data;
   }
 
@@ -163,7 +163,13 @@ export abstract class BaseController extends CustomBaseController {
   /**
    * Log action for audit trail
    */
-  protected logAction(au: AuthenticatedUser, action: string, entityType: string, entityId: string, details?: any): void {
+  protected logAction(
+    au: AuthenticatedUser,
+    action: string,
+    entityType: string,
+    entityId: string,
+    details?: any
+  ): void {
     // Implementation can be added here for audit logging
     console.log(`User ${au.id} performed ${action} on ${entityType} ${entityId}`, details);
   }
@@ -173,19 +179,19 @@ export abstract class BaseController extends CustomBaseController {
    */
   protected handleError(error: any, defaultMessage: string = "An error occurred"): ApiResponse {
     console.error("Controller error:", error);
-    
+
     if (error.code === "ER_DUP_ENTRY") {
       return this.errorResponse("Duplicate entry - record already exists");
     }
-    
+
     if (error.code === "ER_NO_REFERENCED_ROW_2") {
       return this.errorResponse("Referenced record does not exist");
     }
-    
+
     if (error.message) {
       return this.errorResponse(error.message);
     }
-    
+
     return this.errorResponse(defaultMessage);
   }
 }

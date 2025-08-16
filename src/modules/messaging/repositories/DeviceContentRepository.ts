@@ -28,7 +28,7 @@ export class DeviceContentRepository {
 
   private async create(deviceContent: DeviceContent): Promise<DeviceContent> {
     deviceContent.id = UniqueIdHelper.shortId();
-    const sql = "INSERT INTO deviceContent (id, churchId, deviceId, contentType, contentId) VALUES (?, ?, ?, ?, ?);"; 
+    const sql = "INSERT INTO deviceContent (id, churchId, deviceId, contentType, contentId) VALUES (?, ?, ?, ?, ?);";
     const params = [
       deviceContent.id,
       deviceContent.churchId,
