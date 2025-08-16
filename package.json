@@ -49,7 +49,7 @@
     "@aws-sdk/client-sqs": "^3.686.0",
     "@aws-sdk/client-ssm": "^3.686.0",
     "@aws-sdk/lib-storage": "^3.686.0",
-    "@churchapps/apihelper": "^0.1.8",
+    "@churchapps/apihelper": "^0.1.9",
     "@codegenie/serverless-express": "^4.15.0",
     "@google-cloud/speech": "^6.7.0",
     "@google-cloud/storage": "^7.14.0",

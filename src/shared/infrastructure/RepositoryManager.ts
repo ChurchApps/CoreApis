@@ -1,4 +1,5 @@
 import { ConnectionManager } from "./ConnectionManager";
+import { Environment } from "../helpers/Environment";
 import { DB } from "@churchapps/apihelper";
 
 export class RepositoryManager {
@@ -60,8 +61,34 @@ export class RepositoryManager {
    * This ensures the correct database connection is used
    */
   static async setupModuleContext(moduleName: string): Promise<void> {
-    // Get the pool for the module - individual repositories will use their own DB setup
-    await ConnectionManager.getPool(moduleName);
+    try {
+      // Get database config for this module
+      const dbConfig = Environment.getDatabaseConfig(moduleName);
+      if (!dbConfig) {
+        throw new Error(`Database configuration not found for module: ${moduleName}`);
+      }
+      
+      // Import Pool and EnvironmentBase from @churchapps/apihelper
+      const { Pool, EnvironmentBase } = await import("@churchapps/apihelper");
+      
+      // Set the connection string on EnvironmentBase
+      const connectionString = `mysql://${dbConfig.user}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port || 3306}/${dbConfig.database}`;
+      EnvironmentBase.connectionString = connectionString;
+      
+      // Set JWT secret from environment
+      EnvironmentBase.jwtSecret = process.env.JWT_SECRET || "fallback-jwt-secret-for-development";
+      
+      // Set other common environment variables
+      EnvironmentBase.encryptionKey = process.env.ENCRYPTION_KEY || "";
+      
+      // Initialize the pool
+      Pool.initPool();
+      
+      console.log(`✅ Successfully initialized Pool and EnvironmentBase for module: ${moduleName}`);
+    } catch (error) {
+      console.error(`❌ Failed to setup context for module ${moduleName}:`, error);
+      throw error;
+    }
   }
 
   static clearCache(moduleName?: string): void {

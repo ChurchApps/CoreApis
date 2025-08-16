@@ -59,13 +59,16 @@ async function initializeModuleDatabase(moduleName: string) {
     // Ensure the database exists
     await ensureDatabaseExists(moduleName, dbConfig);
 
-    const pool = await ConnectionManager.getPool(moduleName);
     const scriptsPath = path.join(__dirname, 'dbScripts', moduleName);
     
     if (!fs.existsSync(scriptsPath)) {
       console.log(`⚠️  No database scripts found for ${moduleName} at ${scriptsPath}, skipping...`);
       return;
     }
+
+    // Create ApiHelper pool for executing SQL statements
+    const { Pool } = require('@churchapps/apihelper');
+    let pool: any = null;
 
     // Get all SQL files in the module directory
     const files = fs.readdirSync(scriptsPath)
@@ -78,6 +81,9 @@ async function initializeModuleDatabase(moduleName: string) {
     }
 
     console.log(`   📁 Found ${files.length} SQL files for ${moduleName}`);
+
+    // Initialize the pool
+    pool = new Pool(dbConfig.host, dbConfig.user, dbConfig.password, dbConfig.database, dbConfig.connectionLimit || 10, dbConfig.port || 3306);
 
     for (const file of files) {
       const filePath = path.join(scriptsPath, file);
@@ -112,19 +118,24 @@ async function initializeModuleDatabase(moduleName: string) {
   } catch (error) {
     console.error(`   ❌ Failed to initialize ${moduleName} database:`, error);
     throw error;
+  } finally {
+    // Close the pool if it was created
+    if (pool) {
+      await pool.close();
+    }
   }
 }
 
 async function ensureDatabaseExists(moduleName: string, dbConfig: any) {
-  const { EnhancedPoolHelper } = require('@churchapps/apihelper');
+  const { Pool } = require('@churchapps/apihelper');
   
   // Connect without specifying database to create it if needed
-  const tempPool = new EnhancedPoolHelper(
+  const tempPool = new Pool(
     dbConfig.host,
     dbConfig.user,
     dbConfig.password,
     '', // No database specified
-    1,
+    1, // Single connection for creation
     dbConfig.port || 3306
   );
 
