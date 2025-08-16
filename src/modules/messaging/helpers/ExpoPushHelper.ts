@@ -79,7 +79,7 @@ export class ExpoPushHelper {
           body, 
           type, 
           contentId,
-          url: `${Environment.appUrl}/${type}/${contentId}`
+          url: `${Environment.membershipApi}/${type}/${contentId}`
         }
       });
     }
