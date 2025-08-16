@@ -1,10 +1,10 @@
-import { Environment } from './shared/helpers/Environment';
-import { ConnectionManager } from './shared/infrastructure/ConnectionManager';
+import { Environment } from "./shared/helpers/Environment";
+import { ConnectionManager } from "./shared/infrastructure/ConnectionManager";
 
 // Global test setup
 beforeAll(async () => {
   // Initialize test environment
-  await Environment.init('test');
+  await Environment.init("test");
 });
 
 afterAll(async () => {
@@ -13,10 +13,10 @@ afterAll(async () => {
 });
 
 // Mock external services for testing
-jest.mock('aws-sdk');
-jest.mock('firebase-admin');
-jest.mock('stripe');
+jest.mock("aws-sdk");
+jest.mock("firebase-admin");
+jest.mock("stripe");
 
 // Set test environment variables
-process.env.ENVIRONMENT = 'test';
-process.env.NODE_ENV = 'test';
+process.env.ENVIRONMENT = "test";
+process.env.NODE_ENV = "test";

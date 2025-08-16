@@ -17,28 +17,28 @@ export class RepositoryManager {
     const pool = await ConnectionManager.getPool(moduleName);
 
     switch (moduleName) {
-      case 'attendance':
-        const { AttendanceRepositories } = await import('../../modules/attendance');
+      case "attendance":
+        const { AttendanceRepositories } = await import("../../modules/attendance");
         return new AttendanceRepositories();
       
-      case 'content':
-        const { ContentRepositories } = await import('../../modules/content');
+      case "content":
+        const { ContentRepositories } = await import("../../modules/content");
         return new ContentRepositories();
       
-      case 'doing':
-        const { DoingRepositories } = await import('../../modules/doing');
+      case "doing":
+        const { DoingRepositories } = await import("../../modules/doing");
         return new DoingRepositories();
       
-      case 'giving':
-        const { GivingRepositories } = await import('../../modules/giving');
+      case "giving":
+        const { GivingRepositories } = await import("../../modules/giving");
         return new GivingRepositories();
       
-      case 'membership':
-        const { MembershipRepositories } = await import('../../modules/membership');
+      case "membership":
+        const { MembershipRepositories } = await import("../../modules/membership");
         return new MembershipRepositories();
       
-      case 'messaging':
-        const { MessagingRepositories } = await import('../../modules/messaging');
+      case "messaging":
+        const { MessagingRepositories } = await import("../../modules/messaging");
         return new MessagingRepositories();
       
       default:

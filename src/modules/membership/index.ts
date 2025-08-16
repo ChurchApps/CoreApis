@@ -1,12 +1,12 @@
 // Export public interfaces for other modules
-export * from './repositories';
-export * from './models';
-export * from './auth';
-export * from './helpers';
-export * from './constants';
+export * from "./repositories";
+export * from "./models";
+export * from "./auth";
+export * from "./helpers";
+export * from "./constants";
 
 // Export controllers for Inversify container registration
-export * from './controllers';
+export * from "./controllers";
 
 // Module configuration
-export const membershipModuleName = 'membership';
+export const membershipModuleName = "membership";

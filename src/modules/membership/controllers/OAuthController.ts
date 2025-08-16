@@ -87,7 +87,7 @@ export class OAuthController extends MembershipBaseController {
           person: { 
             id: userChurch.personId, 
             membershipStatus: "Guest",
-            name: { first: '', last: '' }
+            name: { first: "", last: "" }
           },
           apis: []
         };
@@ -130,7 +130,7 @@ export class OAuthController extends MembershipBaseController {
           person: { 
             id: userChurch.personId, 
             membershipStatus: "Guest",
-            name: { first: '', last: '' }
+            name: { first: "", last: "" }
           },
           apis: []
         };

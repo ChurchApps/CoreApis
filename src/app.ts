@@ -36,19 +36,19 @@ export const createApp = async () => {
     app.use(cors({
       origin: true,
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
     }));
 
     // Body parser middleware
-    app.use(bodyParser.json({ limit: '50mb' }));
-    app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+    app.use(bodyParser.json({ limit: "50mb" }));
+    app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
     // File upload middleware
     app.use(fileUpload({
       limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
       useTempFiles: true,
-      tempFileDir: '/tmp/'
+      tempFileDir: "/tmp/"
     }));
 
     // Module routing logger (for debugging)
@@ -58,21 +58,21 @@ export const createApp = async () => {
     configureModuleRoutes(app);
 
     // Health check endpoint
-    app.get('/health', (req, res) => {
+    app.get("/health", (req, res) => {
       res.json({ 
-        status: 'healthy', 
+        status: "healthy", 
         timestamp: new Date().toISOString(),
         environment: Environment.currentEnvironment,
-        modules: ['attendance', 'content', 'doing', 'giving', 'membership', 'messaging']
+        modules: ["attendance", "content", "doing", "giving", "membership", "messaging"]
       });
     });
 
     // API documentation endpoint
-    app.get('/', (req, res) => {
+    app.get("/", (req, res) => {
       res.json({
-        name: 'Core API',
-        version: '1.0.0',
-        description: 'Modular monolith for church management system',
+        name: "Core API",
+        version: "1.0.0",
+        description: "Modular monolith for church management system",
         modules: {
           attendance: `${Environment.attendanceApi}`,
           content: `${Environment.contentApi}`,
@@ -88,10 +88,10 @@ export const createApp = async () => {
   server.setErrorConfig((app) => {
     // Global error handler
     app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      console.error('Global error handler:', error);
+      console.error("Global error handler:", error);
       
       const statusCode = error.statusCode || error.status || 500;
-      const message = error.message || 'Internal Server Error';
+      const message = error.message || "Internal Server Error";
       
       res.status(statusCode).json({
         error: {
@@ -107,7 +107,7 @@ export const createApp = async () => {
     app.use((req: express.Request, res: express.Response) => {
       res.status(404).json({
         error: {
-          message: 'Endpoint not found',
+          message: "Endpoint not found",
           status: 404,
           timestamp: new Date().toISOString(),
           path: req.path
@@ -120,55 +120,55 @@ export const createApp = async () => {
 };
 
 // Graceful shutdown handler
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, closing database connections...');
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received, closing database connections...");
   await ConnectionManager.closeAll();
   process.exit(0);
 });
 
-process.on('SIGINT', async () => {
-  console.log('SIGINT received, closing database connections...');
+process.on("SIGINT", async () => {
+  console.log("SIGINT received, closing database connections...");
   await ConnectionManager.closeAll();
   process.exit(0);
 });
 
 async function loadModuleBindings(container: Container) {
   try {
-    console.log('Loading module controllers and bindings...');
+    console.log("Loading module controllers and bindings...");
     
     // Load all module controllers which will self-register via decorators
     // The @controller decorators automatically register with the container
     
     // Import membership module controllers
-    await import('./modules/membership/controllers');
-    console.log('✓ Membership controllers loaded');
+    await import("./modules/membership/controllers");
+    console.log("✓ Membership controllers loaded");
     
     // Import attendance module controllers  
-    await import('./modules/attendance/controllers');
-    console.log('✓ Attendance controllers loaded');
+    await import("./modules/attendance/controllers");
+    console.log("✓ Attendance controllers loaded");
     
     // Import content module controllers
-    await import('./modules/content/controllers');
-    console.log('✓ Content controllers loaded');
+    await import("./modules/content/controllers");
+    console.log("✓ Content controllers loaded");
     
     // Import doing module controllers
-    await import('./modules/doing/controllers');
-    console.log('✓ Doing controllers loaded');
+    await import("./modules/doing/controllers");
+    console.log("✓ Doing controllers loaded");
     
     // Import giving module controllers
-    await import('./modules/giving/controllers');
-    console.log('✓ Giving controllers loaded');
+    await import("./modules/giving/controllers");
+    console.log("✓ Giving controllers loaded");
     
     // Import messaging module controllers
-    await import('./modules/messaging/controllers');
-    console.log('✓ Messaging controllers loaded');
+    await import("./modules/messaging/controllers");
+    console.log("✓ Messaging controllers loaded");
     
     // Set up repository manager as singleton
-    container.bind<RepositoryManager>('RepositoryManager').toConstantValue(RepositoryManager);
+    container.bind<RepositoryManager>("RepositoryManager").toConstantValue(RepositoryManager);
     
-    console.log('All module bindings loaded successfully');
+    console.log("All module bindings loaded successfully");
   } catch (error) {
-    console.error('Error loading module bindings:', error);
+    console.error("Error loading module bindings:", error);
     throw error;
   }
 }

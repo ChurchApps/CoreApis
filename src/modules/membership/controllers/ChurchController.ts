@@ -64,12 +64,12 @@ export class ChurchController extends MembershipBaseController {
           decodeURIComponent(
             // decode unicode characters '\uXXXX'
             JSON.parse(
-              '"' +
+              "\"" +
                 req.body.name
                   .toString()
                   // prepare unicode characters '\uXXXX' for decoding
                   .replace(/%u/g, "\\u") +
-                '"'
+                "\""
             )
           ),
           false
@@ -96,12 +96,12 @@ export class ChurchController extends MembershipBaseController {
           decodeURIComponent(
             // decode unicode characters '\uXXXX'
             JSON.parse(
-              '"' +
+              "\"" +
                 req.query.name
                   .toString()
                   // prepare unicode characters '\uXXXX' for decoding
                   .replace(/%u/g, "\\u") +
-                '"'
+                "\""
             )
           ),
           false
@@ -452,8 +452,8 @@ export class ChurchController extends MembershipBaseController {
       id: p.id, 
       membershipStatus: p.membershipStatus,
       name: {
-        first: p.name?.first || '',
-        last: p.name?.last || ''
+        first: p.name?.first || "",
+        last: p.name?.last || ""
       }
     };
     userChurch.groups = [];
@@ -478,9 +478,9 @@ export class ChurchController extends MembershipBaseController {
           id: row.churchId,
           church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName }, 
           person: { 
-            id: '', 
-            name: { first: '', last: '' },
-            membershipStatus: 'Guest'
+            id: "", 
+            name: { first: "", last: "" },
+            membershipStatus: "Guest"
           }, 
           apis: [] 
         };
@@ -502,9 +502,9 @@ export class ChurchController extends MembershipBaseController {
         id: church.id,
         church: { id: church.id, subDomain: church.subDomain, name: church.name }, 
         person: { 
-          id: '', 
-          name: { first: '', last: '' },
-          membershipStatus: 'Guest'
+          id: "", 
+          name: { first: "", last: "" },
+          membershipStatus: "Guest"
         }, 
         apis: [] 
       };

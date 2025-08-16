@@ -34,10 +34,10 @@ export class SocketHelper {
         console.log(`✓ WebSocket server started on port ${port}`);
       } catch (error) {
         console.warn(`⚠️ Failed to start WebSocket server on port ${port}:`, error.message);
-        console.log('Continuing without WebSocket server...');
+        console.log("Continuing without WebSocket server...");
       }
     } else {
-      console.log('WebSocket server not started (AWS mode or port disabled)');
+      console.log("WebSocket server not started (AWS mode or port disabled)");
     }
   };
 

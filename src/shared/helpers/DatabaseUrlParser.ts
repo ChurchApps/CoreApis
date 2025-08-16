@@ -20,11 +20,11 @@ export class DatabaseUrlParser {
    */
   static parseConnectionString(url: string): DatabaseConfig {
     if (!url) {
-      throw new Error('Database URL is required');
+      throw new Error("Database URL is required");
     }
 
     // Remove mysql:// prefix if present
-    const cleanUrl = url.replace(/^mysql:\/\//, '');
+    const cleanUrl = url.replace(/^mysql:\/\//, "");
     
     // Parse the URL components
     // Pattern: [user[:password]@]host[:port]/database[?params]
@@ -49,8 +49,8 @@ export class DatabaseUrlParser {
 
     return {
       host: host,
-      user: user || 'root',
-      password: password || '',
+      user: user || "root",
+      password: password || "",
       database: database,
       port: port,
       connectionLimit: 10 // Default connection limit
@@ -65,15 +65,15 @@ export class DatabaseUrlParser {
    */
   static validateConfig(config: DatabaseConfig): boolean {
     if (!config.host) {
-      throw new Error('Database host is required');
+      throw new Error("Database host is required");
     }
     
     if (!config.database) {
-      throw new Error('Database name is required');
+      throw new Error("Database name is required");
     }
     
     if (!config.user) {
-      throw new Error('Database user is required');
+      throw new Error("Database user is required");
     }
     
     if (config.port <= 0 || config.port > 65535) {

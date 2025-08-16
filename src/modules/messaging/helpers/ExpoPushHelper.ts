@@ -24,10 +24,10 @@ export class ExpoPushHelper {
 
       messages.push({
         to: pushToken,
-        sound: 'default',
+        sound: "default",
         title,
         body,
-        data: { title, body },
+        data: { title, body }
       });
     }
 
@@ -42,13 +42,13 @@ export class ExpoPushHelper {
           const ticketChunk = await ExpoPushHelper.expo.sendPushNotificationsAsync(chunk);
           tickets.push(...ticketChunk);
         } catch (error) {
-          console.error('Error sending push notification chunk:', error);
+          console.error("Error sending push notification chunk:", error);
         }
       }
       
       return tickets;
     } catch (error) {
-      console.error('Error in sendBulkMessages:', error);
+      console.error("Error in sendBulkMessages:", error);
     }
   }
 
@@ -71,7 +71,7 @@ export class ExpoPushHelper {
 
       messages.push({
         to: pushToken,
-        sound: 'default',
+        sound: "default",
         title,
         body,
         data: { 
@@ -80,7 +80,7 @@ export class ExpoPushHelper {
           type, 
           contentId,
           url: `${Environment.appUrl}/${type}/${contentId}`
-        },
+        }
       });
     }
 
@@ -95,13 +95,13 @@ export class ExpoPushHelper {
           const ticketChunk = await ExpoPushHelper.expo.sendPushNotificationsAsync(chunk);
           tickets.push(...ticketChunk);
         } catch (error) {
-          console.error('Error sending typed push notification chunk:', error);
+          console.error("Error sending typed push notification chunk:", error);
         }
       }
       
       return tickets;
     } catch (error) {
-      console.error('Error in sendBulkTypedMessages:', error);
+      console.error("Error in sendBulkTypedMessages:", error);
     }
   }
 }

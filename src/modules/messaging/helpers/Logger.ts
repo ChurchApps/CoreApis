@@ -22,11 +22,11 @@ export class Logger {
     // In the unified structure, we can use LoggingHelper from apihelper
     // or implement CloudWatch logging as needed
     if (this.logs.length > 0) {
-      const logData = this.logs.join('\n');
+      const logData = this.logs.join("\n");
       try {
-        LoggingHelper.getCurrent().error('messaging', 'batch-logs', logData);
+        LoggingHelper.getCurrent().error("messaging", "batch-logs", logData);
       } catch (error) {
-        console.error('Failed to flush logs:', error);
+        console.error("Failed to flush logs:", error);
       }
       this.logs = [];
     }

@@ -15,12 +15,12 @@ import { RepositoryManager } from "./shared/infrastructure/RepositoryManager";
  * Each module gets its own route namespace
  */
 export const MODULE_ROUTES = {
-  membership: '/membership',
-  attendance: '/attendance', 
-  content: '/content',
-  doing: '/doing',
-  giving: '/giving',
-  messaging: '/messaging'
+  membership: "/membership",
+  attendance: "/attendance", 
+  content: "/content",
+  doing: "/doing",
+  giving: "/giving",
+  messaging: "/messaging"
 } as const;
 
 /**
@@ -41,7 +41,7 @@ export const createModuleContextMiddleware = (moduleName: string) => {
       console.error(`Error setting up context for module ${moduleName}:`, error);
       res.status(500).json({
         error: {
-          message: 'Module context initialization failed',
+          message: "Module context initialization failed",
           module: moduleName,
           timestamp: new Date().toISOString()
         }
@@ -55,7 +55,7 @@ export const createModuleContextMiddleware = (moduleName: string) => {
  * This function is called by the main Express app setup
  */
 export const configureModuleRoutes = (app: express.Application) => {
-  console.log('Configuring module-specific route contexts...');
+  console.log("Configuring module-specific route contexts...");
   
   // Configure middleware for each module route prefix
   Object.entries(MODULE_ROUTES).forEach(([moduleName, routePrefix]) => {
@@ -69,19 +69,19 @@ export const configureModuleRoutes = (app: express.Application) => {
   });
   
   // Add module information endpoint
-  app.get('/modules', (req, res) => {
+  app.get("/modules", (req, res) => {
     res.json({
       modules: Object.keys(MODULE_ROUTES).map(module => ({
         name: module,
         prefix: MODULE_ROUTES[module as keyof typeof MODULE_ROUTES],
-        status: 'active'
+        status: "active"
       })),
       total: Object.keys(MODULE_ROUTES).length,
       timestamp: new Date().toISOString()
     });
   });
   
-  console.log('Module route configuration complete');
+  console.log("Module route configuration complete");
 };
 
 /**

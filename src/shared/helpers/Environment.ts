@@ -28,6 +28,9 @@ export class Environment extends EnvironmentBase {
   static hubspotKey: string;
   static caddyHost: string;
   static caddyPort: string;
+  static mailSystem: string;
+  static appName: string;
+  static appEnv: string;
 
   // Content API specific
   static youTubeApiKey: string;
@@ -56,6 +59,13 @@ export class Environment extends EnvironmentBase {
 
   // Delivery provider
   static deliveryProvider: string;
+  
+  // Legacy support for old API environment variables
+  static connectionString: string;
+  static encryptionKey: string;
+  static serverPort: number;
+  static socketPort: number;
+  static apiEnv: string;
 
   static async init(environment: string) {
     let file = "dev.json";
@@ -85,8 +95,17 @@ export class Environment extends EnvironmentBase {
 
     // Set current environment and server config
     this.currentEnvironment = environment;
-    this.port = data.port || 8082;
+    this.port = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : (data.port || 8084);
     this.socketUrl = data.websocket?.url || this.websocketUrl || "ws://localhost:8087";
+    
+    // Legacy environment variable support
+    this.appEnv = process.env.APP_ENV || process.env.API_ENV || environment;
+    this.apiEnv = this.appEnv;
+    this.serverPort = this.port;
+    this.socketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : (data.websocket?.port || 8087);
+    this.connectionString = process.env.CONNECTION_STRING || "";
+    this.encryptionKey = process.env.ENCRYPTION_KEY || "";
+    this.appName = data.appName || "CoreApi";
 
     // Initialize module-specific configs
     this.initializeModuleConfigs(data);
@@ -110,7 +129,29 @@ export class Environment extends EnvironmentBase {
 
   private static initializeDatabaseConnections(config: any) {
     // First try to load from environment variables (connection strings)
-    const modules = ['membership', 'attendance', 'content', 'giving', 'messaging', 'doing'];
+    const modules = ["membership", "attendance", "content", "giving", "messaging", "doing"];
+    
+    // Legacy support: Check for CONNECTION_STRING (primary database)
+    if (process.env.CONNECTION_STRING && !this.dbConnections.has("membership")) {
+      try {
+        const dbConfig = DatabaseUrlParser.parseConnectionString(process.env.CONNECTION_STRING);
+        this.dbConnections.set("membership", dbConfig);
+        console.log("✅ Loaded membership database config from CONNECTION_STRING (legacy)");
+      } catch (error) {
+        console.error(`❌ Failed to parse CONNECTION_STRING: ${error}`);
+      }
+    }
+    
+    // Legacy support: Check for CONNECTION_STRING_MEMBERSHIP (DoingApi pattern)
+    if (process.env.CONNECTION_STRING_MEMBERSHIP && !this.dbConnections.has("membership-doing")) {
+      try {
+        const dbConfig = DatabaseUrlParser.parseConnectionString(process.env.CONNECTION_STRING_MEMBERSHIP);
+        this.dbConnections.set("membership-doing", dbConfig);
+        console.log("✅ Loaded membership database config for doing module from CONNECTION_STRING_MEMBERSHIP");
+      } catch (error) {
+        console.error(`❌ Failed to parse CONNECTION_STRING_MEMBERSHIP: ${error}`);
+      }
+    }
     
     for (const moduleName of modules) {
       const envVarName = `${moduleName.toUpperCase()}_DB_URL`;
@@ -139,7 +180,7 @@ export class Environment extends EnvironmentBase {
       }
     } else {
       // Fallback for very old legacy config format
-      if (config.database && !this.dbConnections.has('membership')) {
+      if (config.database && !this.dbConnections.has("membership")) {
         this.dbConnections.set("membership", config.database);
       }
     }
@@ -147,20 +188,21 @@ export class Environment extends EnvironmentBase {
 
   private static async initializeAppConfigs(config: any, environment: string) {
     // WebSocket configuration
-    this.websocketUrl = config.websocket?.url || "ws://localhost:8087";
-    this.websocketPort = config.websocket?.port || 8087;
+    this.websocketUrl = process.env.SOCKET_URL || process.env.WEBSOCKET_URL || config.websocket?.url || "ws://localhost:8087";
+    this.websocketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : (process.env.WEBSOCKET_PORT ? parseInt(process.env.WEBSOCKET_PORT) : (config.websocket?.port || 8087));
 
     // File storage configuration
-    this.fileStore = config.fileStore || "disk";
-    this.s3Bucket = config.s3Bucket || "";
-    this.contentRoot = config.contentRoot || "/content/";
-    this.deliveryProvider = config.deliveryProvider || "local";
+    this.fileStore = process.env.FILE_STORE || config.fileStore || "disk";
+    this.s3Bucket = process.env.AWS_S3_BUCKET || config.s3Bucket || "";
+    this.contentRoot = process.env.CONTENT_ROOT || config.contentRoot || "http://localhost:8084/content/";
+    this.deliveryProvider = process.env.DELIVERY_PROVIDER || config.deliveryProvider || "local";
 
     // Membership API specific
     this.jwtExpiration = "2 days";
-    this.emailOnRegistration = config.emailOnRegistration;
-    this.supportEmail = config.supportEmail;
-    this.chumsRoot = config.chumsRoot;
+    this.emailOnRegistration = process.env.EMAIL_ON_REGISTRATION === "true" || config.emailOnRegistration || false;
+    this.supportEmail = process.env.SUPPORT_EMAIL || config.supportEmail || "support@churchapps.org";
+    this.chumsRoot = process.env.CHUMS_ROOT || config.chumsRoot || "https://app.staging.chums.org";
+    this.mailSystem = process.env.MAIL_SYSTEM || config.mailSystem || "";
 
     // AWS Parameter Store values (async)
     this.hubspotKey = process.env.HUBSPOT_KEY || (await AwsHelper.readParameter(`/${environment}/hubspotKey`));
@@ -179,7 +221,7 @@ export class Environment extends EnvironmentBase {
     this.googleRecaptchaSecretKey = process.env.GOOGLE_RECAPTCHA_SECRET_KEY || (await AwsHelper.readParameter(`/${environment}/recaptcha-secret-key`));
 
     // AI provider configuration (shared)
-    this.aiProvider = config.aiProvider;
+    this.aiProvider = process.env.AI_PROVIDER || config.aiProvider || "openrouter";
     this.openRouterApiKey = process.env.OPENROUTER_API_KEY || (await AwsHelper.readParameter(`/${environment}/openRouterApiKey`));
     this.openAiApiKey = process.env.OPENAI_API_KEY || (await AwsHelper.readParameter(`/${environment}/openAiApiKey`));
   }
