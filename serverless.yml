@@ -4,10 +4,6 @@ frameworkVersion: '3'
 
 custom:
   env: ${opt:stage, 'dev'}
-  webpack:
-    webpackConfig: 'webpack.config.js'
-    includeModules: false
-    packager: 'npm'
   serverless-offline:
     httpPort: 8084
     websocketPort: 8087
@@ -60,6 +56,25 @@ provider:
             - execute-api:ManageConnections
           Resource:
             - arn:aws:execute-api:${aws:region}:${aws:accountId}:*/@connections/*
+
+package:
+  individually: false
+  patterns:
+    - "config/**"
+    - "dist/**"
+    - "lambda.js"
+    - "package.json"
+    - "!node_modules/**"
+    - "!src/**"
+    - "!tools/**"
+    - "!package-lock.json"
+    - "!tsconfig.json"
+    - "!.env"
+    - "!.git/**"
+    - "!.gitignore"
+    - "!README.md"
+    - "!serverless.yml"
+    - "!layer/**"
 
 layers:
   dependencies:
@@ -128,7 +143,6 @@ functions:
           enabled: true
 
 plugins:
-  - serverless-webpack
   - serverless-offline
 
 resources:
