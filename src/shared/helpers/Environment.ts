@@ -61,7 +61,6 @@ export class Environment extends EnvironmentBase {
   static deliveryProvider: string;
   
   // Legacy support for old API environment variables
-  static connectionString: string;
   static encryptionKey: string;
   static serverPort: number;
   static socketPort: number;
@@ -103,7 +102,6 @@ export class Environment extends EnvironmentBase {
     this.apiEnv = this.appEnv;
     this.serverPort = this.port;
     this.socketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : (data.websocket?.port || 8087);
-    this.connectionString = process.env.CONNECTION_STRING || "";
     this.encryptionKey = process.env.ENCRYPTION_KEY || "";
     this.appName = data.appName || "CoreApi";
 
@@ -128,28 +126,17 @@ export class Environment extends EnvironmentBase {
   }
 
   private static initializeDatabaseConnections(config: any) {
-    // First try to load from environment variables (connection strings)
+    // Load from environment variables (connection strings)
     const modules = ["membership", "attendance", "content", "giving", "messaging", "doing"];
     
-    // Legacy support: Check for CONNECTION_STRING (primary database)
-    if (process.env.CONNECTION_STRING && !this.dbConnections.has("membership")) {
+    // Special case: DoingApi needs access to membership database
+    if (process.env.DOING_MEMBERSHIP_DB_URL) {
       try {
-        const dbConfig = DatabaseUrlParser.parseConnectionString(process.env.CONNECTION_STRING);
-        this.dbConnections.set("membership", dbConfig);
-        console.log("✅ Loaded membership database config from CONNECTION_STRING (legacy)");
-      } catch (error) {
-        console.error(`❌ Failed to parse CONNECTION_STRING: ${error}`);
-      }
-    }
-    
-    // Legacy support: Check for CONNECTION_STRING_MEMBERSHIP (DoingApi pattern)
-    if (process.env.CONNECTION_STRING_MEMBERSHIP && !this.dbConnections.has("membership-doing")) {
-      try {
-        const dbConfig = DatabaseUrlParser.parseConnectionString(process.env.CONNECTION_STRING_MEMBERSHIP);
+        const dbConfig = DatabaseUrlParser.parseConnectionString(process.env.DOING_MEMBERSHIP_DB_URL);
         this.dbConnections.set("membership-doing", dbConfig);
-        console.log("✅ Loaded membership database config for doing module from CONNECTION_STRING_MEMBERSHIP");
+        console.log("✅ Loaded membership database config for doing module from DOING_MEMBERSHIP_DB_URL");
       } catch (error) {
-        console.error(`❌ Failed to parse CONNECTION_STRING_MEMBERSHIP: ${error}`);
+        console.error(`❌ Failed to parse DOING_MEMBERSHIP_DB_URL: ${error}`);
       }
     }
     
