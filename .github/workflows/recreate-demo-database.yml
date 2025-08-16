@@ -1,13 +1,11 @@
-name: Cleanup Demo Database
+name: Recreate Demo Database
 
 on:
-  schedule:
-    - cron: "0 2 * * *" # Runs at 2 AM UTC every day
   workflow_dispatch: # Allows manual triggering
 
 jobs:
   cleanup:
-    name: Cleanup Demo Database
+    name: Recreate Demo Database
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,12 +27,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Reset and Initialize All Module Databases
+      - name: Recreate All Module Databases
         run: |
           # Define all modules in correct initialization order
           MODULES=("membership" "attendance" "content" "giving" "messaging" "doing")
           
-          echo "🚀 Starting cleanup of demo databases for all modules..."
+          echo "🚀 Starting recreation of demo databases for all modules..."
           echo "📋 Module order: ${MODULES[*]}"
           
           # Create base .env file
@@ -74,4 +72,4 @@ jobs:
           done
           
           echo ""
-          echo "🎉 All module databases have been cleaned up and reinitialized!"
+          echo "🎉 All module databases have been recreated successfully!"

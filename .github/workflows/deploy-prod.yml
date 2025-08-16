@@ -18,7 +18,7 @@ jobs:
     name: Validate Production Deployment
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch'
-    
+
     steps:
       - name: Validate confirmation
         run: |
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate-input]
     if: always() && (needs.validate-input.result == 'success' || github.event_name == 'release')
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,8 +41,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [pre-deployment-checks]
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,8 +77,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Cache npm dependencies
         uses: actions/cache@v3
@@ -125,7 +125,7 @@ jobs:
         run: |
           # Wait for deployment to stabilize
           sleep 30
-          
+
           echo "Running post-deployment health checks..."
           # Test core endpoints
           curl -f https://api.churchapps.org/health
@@ -140,7 +140,7 @@ jobs:
     name: Production Smoke Tests
     needs: deploy
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -153,7 +153,7 @@ jobs:
           PROD_API_URL: https://api.churchapps.org
         run: |
           echo "🧪 Running production smoke tests..."
-          
+
           # Test health endpoint
           echo "Testing health endpoint..."
           response=$(curl -s -o /dev/null -w "%{http_code}" $PROD_API_URL/health)
@@ -163,7 +163,7 @@ jobs:
             echo "❌ Health check failed with status: $response"
             exit 1
           fi
-          
+
           # Test core module endpoints (read-only operations)
           echo "Testing core endpoints..."
           curl -f $PROD_API_URL/membership/churches > /dev/null
@@ -172,7 +172,7 @@ jobs:
           curl -f $PROD_API_URL/giving/funds > /dev/null
           curl -f $PROD_API_URL/messaging/conversations > /dev/null
           curl -f $PROD_API_URL/doing/tasks > /dev/null
-          
+
           echo "✅ All smoke tests passed"
 
   rollback-plan:
@@ -180,7 +180,7 @@ jobs:
     needs: [deploy]
     runs-on: ubuntu-latest
     if: failure()
-    
+
     steps:
       - name: Create rollback instructions
         run: |
@@ -189,35 +189,3 @@ jobs:
           echo "2. If needed, deploy previous stable version"
           echo "3. Monitor application metrics"
           echo "4. Notify team of rollback completion"
-
-  notify:
-    name: Notify Production Deployment
-    needs: [deploy, smoke-tests]
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
-      - name: Notify deployment status
-        uses: 8398a7/action-slack@v3
-        if: env.SLACK_WEBHOOK_URL != ''
-        with:
-          status: ${{ job.status }}
-          channel: '#production-alerts'
-          text: |
-            🚨 PRODUCTION DEPLOYMENT: ${{ job.status }}
-            Environment: Production
-            Commit: ${{ github.sha }}
-            Actor: ${{ github.actor }}
-            Time: ${{ steps.date.outputs.date }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Create deployment summary
-        if: success()
-        run: |
-          echo "🎉 Production deployment completed successfully!"
-          echo "Deployment details:"
-          echo "- Commit: ${{ github.sha }}"
-          echo "- Actor: ${{ github.actor }}"
-          echo "- Environment: Production"
-          echo "- Status: Success"
