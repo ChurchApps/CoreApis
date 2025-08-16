@@ -34,6 +34,24 @@ const web = async function(event, context) {
     console.log('Event httpMethod:', event.httpMethod);
     console.log('Event path:', event.path);
     
+    // Quick test endpoint
+    if (event.path === '/test') {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          message: 'Lambda is working',
+          path: event.path,
+          method: event.httpMethod,
+          stage: process.env.STAGE,
+          time: new Date().toISOString()
+        })
+      };
+    }
+    
     await checkPool();
     
     // Initialize the handler only once

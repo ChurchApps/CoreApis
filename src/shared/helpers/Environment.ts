@@ -115,7 +115,7 @@ export class Environment extends EnvironmentBase {
     this.initializeModuleConfigs(data);
 
     // Initialize database connections
-    this.initializeDatabaseConnections(data);
+    await this.initializeDatabaseConnections(data);
 
     // Initialize app configurations
     await this.initializeAppConfigs(data, environment);
@@ -131,7 +131,7 @@ export class Environment extends EnvironmentBase {
     this.doingApi = config.doingApi || config.apiUrl;
   }
 
-  private static initializeDatabaseConnections(config: any) {
+  private static async initializeDatabaseConnections(config: any) {
     // Load from environment variables (connection strings)
     const modules = ["membership", "attendance", "content", "giving", "messaging", "doing"];
 
@@ -146,17 +146,34 @@ export class Environment extends EnvironmentBase {
       }
     }
 
+    // In Lambda/AWS environment, also try to load from Parameter Store
+    const isAwsEnvironment = process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.AWS_EXECUTION_ENV;
+    const environment = this.currentEnvironment || process.env.STAGE || process.env.ENVIRONMENT || 'dev';
+
     for (const moduleName of modules) {
       const envVarName = `${moduleName.toUpperCase()}_DB_URL`;
-      const connectionString = process.env[envVarName];
+      let connectionString = process.env[envVarName];
+
+      // If not in environment variable and we're in AWS, try Parameter Store
+      if (!connectionString && isAwsEnvironment) {
+        try {
+          const paramName = `/${environment}/${moduleName}Api/connectionString`;
+          connectionString = await AwsHelper.readParameter(paramName);
+          if (connectionString) {
+            console.log(`✅ Loaded ${moduleName} connection string from Parameter Store: ${paramName}`);
+          }
+        } catch (error) {
+          console.log(`⚠️ No Parameter Store value for ${moduleName}: ${error.message}`);
+        }
+      }
 
       if (connectionString) {
         try {
           const dbConfig = DatabaseUrlParser.parseConnectionString(connectionString);
           this.dbConnections.set(moduleName, dbConfig);
-          console.log(`✅ Loaded ${moduleName} database config from ${envVarName}`);
+          console.log(`✅ Loaded ${moduleName} database config`);
         } catch (error) {
-          console.error(`❌ Failed to parse ${envVarName}: ${error}`);
+          console.error(`❌ Failed to parse connection string for ${moduleName}: ${error}`);
           throw new Error(`Invalid database connection string for ${moduleName}: ${error}`);
         }
       }
