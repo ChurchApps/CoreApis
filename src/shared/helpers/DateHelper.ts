@@ -83,4 +83,11 @@ export class DateHelper {
   static getAge(birthDate: Date | string): number {
     return moment().diff(moment(birthDate), "years");
   }
+
+  /**
+   * Legacy alias for toMySqlFormat (backward compatibility)
+   */
+  static toMysqlDate(date: Date | string): string {
+    return this.toMySqlFormat(date);
+  }
 }

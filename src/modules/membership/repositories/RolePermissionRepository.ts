@@ -74,19 +74,19 @@ export class RolePermissionRepository {
     data.forEach((row: any) => {
       if (currentUserChurch === null || row.churchId !== currentUserChurch.church.id) {
         currentUserChurch = {
+          id: row.churchId,
           church: {
             id: row.churchId,
             name: row.churchName,
             subDomain: row.subDomain,
             archivedDate: row.archivedDate,
-            address1: row.address1,
-            address2: row.address2,
-            city: row.city,
-            state: row.state,
-            zip: row.zip,
-            country: row.country
+            address: row.address1
           },
-          person: { id: row.personId, membershipStatus: row.membershipStatus },
+          person: { 
+            id: row.personId, 
+            membershipStatus: row.membershipStatus,
+            name: { first: row.firstName || "", last: row.lastName || "" }
+          },
           apis: []
         };
         result.push(currentUserChurch);
@@ -129,7 +129,16 @@ export class RolePermissionRepository {
     let currentApi: Api = null;
     data.forEach((row: any) => {
       if (result === null) {
-        result = { church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName }, person: {}, apis: [] };
+        result = { 
+          id: row.churchId,
+          church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName }, 
+          person: { 
+            id: row.personId || "", 
+            name: { first: "", last: "" },
+            membershipStatus: ""
+          }, 
+          apis: [] 
+        };
         currentApi = null;
       }
 
@@ -178,7 +187,16 @@ export class RolePermissionRepository {
 
     data.forEach((row: any) => {
       if (result === null) {
-        result = { church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName }, person: {}, apis: [] };
+        result = { 
+          id: row.churchId,
+          church: { id: row.churchId, subDomain: row.subDomain, name: row.churchName }, 
+          person: { 
+            id: row.personId || "", 
+            name: { first: "", last: "" },
+            membershipStatus: ""
+          }, 
+          apis: [] 
+        };
         currentApi = null;
       }
 

@@ -1,7 +1,7 @@
 // Export public interfaces for other modules
 export * from "./repositories";
 export * from "./models";
-export * from "./auth";
+export { AuthenticatedUser } from "./auth";
 export * from "./helpers";
 export * from "./constants";
 

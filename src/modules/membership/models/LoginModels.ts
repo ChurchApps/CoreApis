@@ -5,6 +5,7 @@ export interface LoginRequest {
   password: string;
   appName?: string;
   authGuid?: string;
+  jwt?: string;
 }
 
 export interface LoginResponse {
@@ -21,6 +22,8 @@ export interface LoginUserChurch {
     name: string;
     subDomain?: string;
     address?: string;
+    settings?: any;
+    archivedDate?: Date;
   };
   person?: {
     id: string;
@@ -51,6 +54,7 @@ export interface ResetPasswordRequest {
   subject: string;
   body: string;
   appName?: string;
+  appUrl?: string;
 }
 
 export interface NewPasswordRequest {
@@ -69,6 +73,7 @@ export interface LoadCreateUserRequest {
   appUrl?: string;
   firstName?: string;
   lastName?: string;
+  userId?: string;
 }
 
 export interface RegisterUserRequest {
@@ -77,6 +82,8 @@ export interface RegisterUserRequest {
   firstName: string;
   lastName: string;
   churchId?: string;
+  appName?: string;
+  appUrl?: string;
 }
 
 export interface RegistrationRequest {

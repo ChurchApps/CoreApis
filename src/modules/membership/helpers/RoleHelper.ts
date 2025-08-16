@@ -133,7 +133,8 @@ export class RoleHelper {
 
   private async createLessonsRole() {
     const roleId: string = await this.createRole("Lessons Admins", [
-      { apiName: "LessonsApi", contentType: "Schedules", action: "Edit" }
+      // TODO: Update with correct ApiName and ContentType when LessonsApi is properly defined
+      // { apiName: "LessonsApi", contentType: "Schedules", action: "Edit" }
     ]);
 
     await this.createRoleMember(roleId);

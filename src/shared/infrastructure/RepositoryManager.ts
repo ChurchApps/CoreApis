@@ -1,6 +1,5 @@
 import { ConnectionManager } from "./ConnectionManager";
 import { Environment } from "../helpers/Environment";
-import { DB } from "@churchapps/apihelper";
 
 export class RepositoryManager {
   private static instances: Map<string, any> = new Map();
@@ -15,7 +14,7 @@ export class RepositoryManager {
 
   private static async createRepositories(moduleName: string): Promise<any> {
     // Get the pool for this module (DB helper will be managed by individual repositories)
-    const pool = await ConnectionManager.getPool(moduleName);
+    const _pool = await ConnectionManager.getPool(moduleName);
 
     switch (moduleName) {
       case "attendance":

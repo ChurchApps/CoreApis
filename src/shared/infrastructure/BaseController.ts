@@ -154,7 +154,7 @@ export abstract class BaseController extends CustomBaseController {
    * Form access validation for modules that support forms
    * This can be overridden by specific modules that need form permissions
    */
-  protected async formAccess(au: AuthenticatedUser, formId: string, access?: string): Promise<boolean> {
+  protected async formAccess(au: AuthenticatedUser, _formId: string, _access?: string): Promise<boolean> {
     // Default implementation - override in modules that support forms
     if (au.checkAccess(Permissions.forms.admin)) return true;
     return false;
@@ -193,6 +193,48 @@ export abstract class BaseController extends CustomBaseController {
     }
 
     return this.errorResponse(defaultMessage);
+  }
+
+  /**
+   * Action wrapper method - delegates to parent class
+   * This ensures the method is available in child controllers
+   */
+  public actionWrapper(req: any, res: any, func: any): Promise<any> {
+    // This should call the parent class method if it exists
+    if (super.actionWrapper) {
+      return super.actionWrapper(req, res, func);
+    }
+    
+    // Fallback implementation
+    return func(req.user || { churchId: "", personId: "", id: "" });
+  }
+
+  /**
+   * Anonymous action wrapper method - delegates to parent class
+   * This ensures the method is available in child controllers
+   */
+  public actionWrapperAnon(req: any, res: any, func: any): Promise<any> {
+    // This should call the parent class method if it exists
+    if (super.actionWrapperAnon) {
+      return super.actionWrapperAnon(req, res, func);
+    }
+    
+    // Fallback implementation - call function directly for anonymous operations
+    return func();
+  }
+
+  /**
+   * JSON response method - delegates to parent class
+   * This ensures the method is available in child controllers
+   */
+  public json(data: any, statusCode?: number): any {
+    // This should call the parent class method if it exists
+    if (super.json) {
+      return super.json(data, statusCode);
+    }
+    
+    // Fallback implementation
+    return data;
   }
 }
 

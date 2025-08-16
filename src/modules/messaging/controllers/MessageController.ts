@@ -1,7 +1,7 @@
 import { controller, httpGet, httpPost, httpDelete, requestParam } from "inversify-express-utils";
 import express from "express";
 import { MessagingBaseController } from "./MessagingBaseController";
-import { Message, Conversation } from "../models";
+import { Message } from "../models";
 import { DeliveryHelper } from "../helpers/DeliveryHelper";
 import { NotificationHelper } from "../helpers/NotificationHelper";
 
@@ -17,7 +17,7 @@ export class MessageController extends MessagingBaseController {
     return this.actionWrapperAnon(req, res, async () => {
       await this.initializeRepositories();
       const data = await this.messagingRepositories.message.loadForConversation(churchId, conversationId);
-      return this.messagingRepositories.message.convertAllToModel(data);
+      return this.messagingRepositories.message.convertAllToModel(data as any[]);
     });
   }
 
@@ -66,7 +66,7 @@ export class MessageController extends MessagingBaseController {
         );
       });
       const result = await Promise.all(promises);
-      return this.messagingRepositories.message.convertAllToModel(result);
+      return this.messagingRepositories.message.convertAllToModel(result as any[]);
     });
   }
 

@@ -31,7 +31,7 @@ export class CustomAuthProvider extends BaseAuthProvider {
    * Module-specific authentication validation
    * This can be extended as modules are migrated to add specific auth rules
    */
-  protected async validateModuleAccess(token: any, moduleName?: string): Promise<boolean> {
+  protected async validateModuleAccess(token: any, _moduleName?: string): Promise<boolean> {
     // Base validation - use the public validateToken method
     const isValid = await this.validateToken(token);
     if (!isValid) return false;
@@ -69,6 +69,32 @@ export class CustomAuthProvider extends BaseAuthProvider {
     } catch (error) {
       console.error("Token validation error:", error);
       return false;
+    }
+  }
+
+  /**
+   * Required method for AuthProvider interface
+   * Get user information from the authentication provider
+   */
+  async getUser(req: any, res: any, next: any): Promise<any> {
+    try {
+      // Call the parent implementation if available
+      if (super.getUser) {
+        return await super.getUser(req, res, next);
+      }
+
+      // Basic implementation - extract user from token
+      const token = req.headers.authorization?.replace("Bearer ", "");
+      if (token && await this.validateToken(token)) {
+        // For now, return a basic user object
+        // This should be replaced with actual JWT decoding and user lookup
+        return { authenticated: true, token };
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Get user error:", error);
+      return null;
     }
   }
 }

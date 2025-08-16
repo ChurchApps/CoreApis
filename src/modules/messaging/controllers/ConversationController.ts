@@ -2,7 +2,7 @@ import { controller, httpGet, httpPost, httpDelete, requestParam } from "inversi
 import express from "express";
 import { MessagingBaseController } from "./MessagingBaseController";
 import { Conversation } from "../models";
-import { ArrayHelper, EncryptionHelper } from "@churchapps/apihelper";
+import { ArrayHelper } from "@churchapps/apihelper";
 
 @controller("/conversations")
 export class ConversationController extends MessagingBaseController {
@@ -57,7 +57,7 @@ export class ConversationController extends MessagingBaseController {
     return this.actionWrapperAnon(req, res, async () => {
       await this.initializeRepositories();
       const data = await this.messagingRepositories.conversation.loadForContent(churchId, contentType, contentId);
-      return this.messagingRepositories.conversation.convertAllToModel(data);
+      return this.messagingRepositories.conversation.convertAllToModel(data as any[]);
     });
   }
 

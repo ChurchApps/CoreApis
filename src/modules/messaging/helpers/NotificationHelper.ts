@@ -1,7 +1,6 @@
 import { ArrayHelper, EmailHelper } from "@churchapps/apihelper";
 import { Conversation, Device, Message, PrivateMessage, Notification, NotificationPreference } from "../models";
 import { MessagingRepositories } from "../repositories";
-import { Logger } from "./Logger";
 import { DeliveryHelper } from "./DeliveryHelper";
 import { ExpoPushHelper } from "./ExpoPushHelper";
 import axios from "axios";
@@ -18,7 +17,7 @@ export class NotificationHelper {
     conversation: Conversation,
     message: Message,
     senderPersonId: string,
-    title?: string
+    _title?: string
   ) => {
     switch (conversation.contentType) {
       case "streamingLive":
@@ -95,7 +94,7 @@ export class NotificationHelper {
       notifications[0].churchId,
       notifications[0].contentType,
       notifications[0].contentId
-    );
+    ) as any[];
     for (let i = notifications.length - 1; i >= 0; i--) {
       if (ArrayHelper.getAll(existing, "personId", notifications[i].personId).length > 0) notifications.splice(i, 1);
     }
@@ -138,7 +137,7 @@ export class NotificationHelper {
     }
 
     // Handle push notifications
-    const devices: Device[] = await NotificationHelper.repositories.device.loadForPerson(personId);
+    const devices: Device[] = await NotificationHelper.repositories.device.loadForPerson(personId) as any[];
 
     if (devices.length > 0) {
       try {
@@ -185,7 +184,7 @@ export class NotificationHelper {
     }
 
     // Handle push notifications
-    const devices: Device[] = await NotificationHelper.repositories.device.loadForPerson(personId);
+    const devices: Device[] = await NotificationHelper.repositories.device.loadForPerson(personId) as any[];
 
     if (devices.length > 0) {
       try {
@@ -236,7 +235,7 @@ export class NotificationHelper {
     }
 
     // Handle push notifications
-    const devices: Device[] = await NotificationHelper.repositories.device.loadForPerson(personId);
+    const devices: Device[] = await NotificationHelper.repositories.device.loadForPerson(personId) as any[];
 
     if (devices.length > 0) {
       try {
@@ -277,8 +276,8 @@ export class NotificationHelper {
 
   static sendEmailNotifications = async (frequency: string) => {
     let promises: Promise<any>[] = [];
-    const allNotifications: Notification[] = await NotificationHelper.repositories.notification.loadUndelivered();
-    const allPMs: PrivateMessage[] = await NotificationHelper.repositories.privateMessage.loadUndelivered();
+    const allNotifications: Notification[] = await NotificationHelper.repositories.notification.loadUndelivered() as any[];
+    const allPMs: PrivateMessage[] = await NotificationHelper.repositories.privateMessage.loadUndelivered() as any[];
     // Removed excessive logging - only log significant batch operations
     if (allNotifications.length === 0 && allPMs.length === 0) return;
 
@@ -286,7 +285,7 @@ export class NotificationHelper {
       ArrayHelper.getIds(allPMs, "notifyPersonId")
     );
 
-    const notificationPrefs = await NotificationHelper.repositories.notificationPreference.loadByPersonIds(peopleIds);
+    const notificationPrefs = await NotificationHelper.repositories.notificationPreference.loadByPersonIds(peopleIds) as any[];
     const todoPrefs: NotificationPreference[] = [];
     peopleIds.forEach(async (personId) => {
       // Removed per-person logging to reduce CloudWatch noise

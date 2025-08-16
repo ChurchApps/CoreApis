@@ -14,7 +14,7 @@ export class DeviceController extends MessagingBaseController {
     return this.actionWrapper(req, res, async (au) => {
       await this.initializeRepositories();
       const data = await this.messagingRepositories.device.loadByChurchId(au.churchId);
-      return this.messagingRepositories.device.convertAllToModel(data);
+      return this.messagingRepositories.device.convertAllToModel(data as any[]);
     });
   }
 
@@ -28,7 +28,7 @@ export class DeviceController extends MessagingBaseController {
     return this.actionWrapper(req, res, async (au) => {
       await this.initializeRepositories();
       const data = await this.messagingRepositories.device.loadByPersonId(au.churchId, personId);
-      return this.messagingRepositories.device.convertAllToModel(data);
+      return this.messagingRepositories.device.convertAllToModel(data as any[]);
     });
   }
 
@@ -57,7 +57,7 @@ export class DeviceController extends MessagingBaseController {
         promises.push(this.messagingRepositories.device.save(device));
       });
       const result = await Promise.all(promises);
-      return this.messagingRepositories.device.convertAllToModel(result);
+      return this.messagingRepositories.device.convertAllToModel(result as any[]);
     });
   }
 

@@ -16,7 +16,7 @@ export class NotificationController extends MessagingBaseController {
     return this.actionWrapper(req, res, async (au) => {
       await this.initializeRepositories();
       const data = await this.messagingRepositories.notification.loadByPersonId(au.churchId, personId);
-      return this.messagingRepositories.notification.convertAllToModel(data);
+      return this.messagingRepositories.notification.convertAllToModel(data as any[]);
     });
   }
 
@@ -44,7 +44,7 @@ export class NotificationController extends MessagingBaseController {
         promises.push(this.messagingRepositories.notification.save(notification));
       });
       const result = await Promise.all(promises);
-      return this.messagingRepositories.notification.convertAllToModel(result);
+      return this.messagingRepositories.notification.convertAllToModel(result as any[]);
     });
   }
 

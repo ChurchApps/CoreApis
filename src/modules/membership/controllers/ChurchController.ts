@@ -81,7 +81,7 @@ export class ChurchController extends MembershipBaseController {
       return this.json(result, 200);
     } catch (e) {
       this.logger.error(e);
-      return this.internalServerError(e);
+      return this.json({ error: "Internal server error" }, 500);
     }
   }
 
@@ -113,7 +113,7 @@ export class ChurchController extends MembershipBaseController {
       return this.json(result, 200);
     } catch (e) {
       this.logger.error(e);
-      return this.internalServerError(e);
+      return this.json({ error: "Internal server error" }, 500);
     }
   }
 
@@ -140,7 +140,7 @@ export class ChurchController extends MembershipBaseController {
       return this.json(result, 200);
     } catch (e) {
       this.logger.error(e);
-      return this.internalServerError(e);
+      return this.json({ error: "Internal server error" }, 500);
     }
   }
 

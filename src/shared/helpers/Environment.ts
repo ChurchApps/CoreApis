@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { AwsHelper, EnvironmentBase } from "@churchapps/apihelper";
-import { DatabaseUrlParser, DatabaseConfig } from "./DatabaseUrlParser";
+import { DatabaseUrlParser } from "./DatabaseUrlParser";
 
 export class Environment extends EnvironmentBase {
   // Current environment and server configuration
@@ -60,6 +60,9 @@ export class Environment extends EnvironmentBase {
   // Delivery provider
   static deliveryProvider: string;
 
+  // CORS configuration
+  static corsOrigin: string;
+
   // Legacy support for old API environment variables
   static encryptionKey: string;
   static serverPort: number;
@@ -104,6 +107,7 @@ export class Environment extends EnvironmentBase {
     this.socketPort = process.env.SOCKET_PORT ? parseInt(process.env.SOCKET_PORT) : data.websocket?.port || 8087;
     this.encryptionKey = process.env.ENCRYPTION_KEY || "";
     this.appName = data.appName || "CoreApi";
+    this.corsOrigin = process.env.CORS_ORIGIN || data.corsOrigin || "*";
 
     // Initialize module-specific configs
     this.initializeModuleConfigs(data);

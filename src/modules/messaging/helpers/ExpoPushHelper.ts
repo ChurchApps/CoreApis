@@ -1,5 +1,4 @@
 import { Expo, ExpoPushMessage, ExpoPushTicket } from "expo-server-sdk";
-import { LoggingHelper } from "@churchapps/apihelper";
 import { Environment } from "../../../shared/helpers/Environment";
 
 export class ExpoPushHelper {

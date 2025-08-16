@@ -35,10 +35,17 @@ export class UniqueIdHelper {
    * Generate a church-scoped unique ID
    * Ensures uniqueness within a church context
    */
-  static churchScopedId(churchId: string): string {
+  static churchScopedId(_churchId: string): string {
     const id = this.shortId();
     // For database uniqueness, we just return the short ID
     // The church scoping is handled at the database level
     return id;
+  }
+
+  /**
+   * Check if a value is missing or empty (backward compatibility)
+   */
+  static isMissing(value: any): boolean {
+    return value === undefined || value === null || value === "";
   }
 }
