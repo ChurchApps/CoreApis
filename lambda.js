@@ -51,6 +51,42 @@ const web = async function(event, context) {
         })
       };
     }
+
+    // Test POST request handling
+    if (event.path === '/test-post' && event.httpMethod === 'POST') {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          message: 'POST request received',
+          body: event.body,
+          headers: event.headers,
+          method: event.httpMethod,
+          time: new Date().toISOString()
+        })
+      };
+    }
+
+    // Test Express app routing without database
+    if (event.path === '/api/test') {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          message: 'API routing working',
+          path: event.path,
+          method: event.httpMethod,
+          modules: ['membership', 'attendance', 'content', 'giving', 'messaging', 'doing'],
+          time: new Date().toISOString()
+        })
+      };
+    }
     
     await checkPool();
     
