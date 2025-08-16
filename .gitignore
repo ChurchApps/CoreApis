@@ -7,6 +7,7 @@ layer/
 # Build outputs
 dist/
 *.js
+!eslint.config.js
 *.js.map
 *.d.ts
 *.d.ts.map
