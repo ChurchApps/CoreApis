@@ -13,7 +13,6 @@ afterAll(async () => {
 });
 
 // Mock external services for testing
-jest.mock("aws-sdk");
 jest.mock("firebase-admin");
 jest.mock("stripe");
 

@@ -6,9 +6,7 @@ custom:
   env: ${opt:stage, 'dev'}
   webpack:
     webpackConfig: 'webpack.config.js'
-    includeModules:
-      forceExclude:
-        - aws-sdk
+    includeModules: false
     packager: 'npm'
   serverless-offline:
     httpPort: 8084
