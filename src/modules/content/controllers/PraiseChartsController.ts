@@ -92,38 +92,39 @@ export class PraiseChartsController extends ContentBaseController {
   }
 
   @httpGet("/download")
-  public async download(req: express.Request<{}, {}, null>) {
-    const au = this.authUser();
-    const settings: Setting[] = await this.repositories.setting.loadUser(au.churchId, au.id);
-    const token = settings.find((s) => s.keyName === "praiseChartsAccessToken")?.value;
-    const secret = settings.find((s) => s.keyName === "praiseChartsAccessTokenSecret")?.value;
-    const fileBuffer: any = await PraiseChartsHelper.download(
-      req.query.skus.toString().split(","),
-      req.query.keys.toString().split(","),
-      token,
-      secret
-    );
+  public async download(req: express.Request<{}, {}, null>, res: express.Response): Promise<any> {
+    return this.actionWrapper(req, res, async (au) => {
+      const settings: Setting[] = await this.repositories.setting.loadUser(au.churchId, au.id);
+      const token = settings.find((s) => s.keyName === "praiseChartsAccessToken")?.value;
+      const secret = settings.find((s) => s.keyName === "praiseChartsAccessTokenSecret")?.value;
+      const fileBuffer: any = await PraiseChartsHelper.download(
+        req.query.skus.toString().split(","),
+        req.query.keys.toString().split(","),
+        token,
+        secret
+      );
 
-    let fileName = "praisecharts.pdf";
-    if (req.query.file_name) {
-      fileName = req.query.file_name.toString();
-    }
-    let mimeType = "application/pdf";
-    const fileType = fileName.split(".")[1].toLowerCase();
-    switch (fileType) {
-      case "zip":
-        mimeType = "application/zip";
-        break;
-    }
+      let fileName = "praisecharts.pdf";
+      if (req.query.file_name) {
+        fileName = req.query.file_name.toString();
+      }
+      let mimeType = "application/pdf";
+      const fileType = fileName.split(".")[1].toLowerCase();
+      switch (fileType) {
+        case "zip":
+          mimeType = "application/zip";
+          break;
+      }
 
-    // Ensure the file buffer is properly handled for both PDF and ZIP
-    const buffer = Buffer.isBuffer(fileBuffer) ? fileBuffer : Buffer.from(fileBuffer);
+      // Ensure the file buffer is properly handled for both PDF and ZIP
+      const buffer = Buffer.isBuffer(fileBuffer) ? fileBuffer : Buffer.from(fileBuffer);
 
-    const redirectUrl = process.env.SERVER_PORT
-      ? await PraiseChartsController.saveLocalFile(fileName, buffer)
-      : await PraiseChartsController.saveS3File(fileName, mimeType, buffer);
+      const redirectUrl = process.env.SERVER_PORT
+        ? await PraiseChartsController.saveLocalFile(fileName, buffer)
+        : await PraiseChartsController.saveS3File(fileName, mimeType, buffer);
 
-    return { redirectUrl };
+      return { redirectUrl };
+    });
   }
 
   @httpGet("/authUrl")

@@ -174,6 +174,9 @@ export abstract class BaseController extends CustomBaseController {
     console.log(`User ${au.id} performed ${action} on ${entityType} ${entityId}`, details);
   }
 
+  // Remove overrides that conflict with the base class
+  // The CustomBaseController from @churchapps/apihelper already provides these methods
+
   /**
    * Handle common controller errors
    */
@@ -235,6 +238,21 @@ export abstract class BaseController extends CustomBaseController {
     
     // Fallback implementation
     return data;
+  }
+
+  /**
+   * Check if a query parameter includes a specific value
+   * Helper method for conditional data loading
+   */
+  public include(req: any, param: string): boolean {
+    const includeParam = req.query?.include;
+    if (!includeParam) return false;
+    
+    if (typeof includeParam === "string") {
+      return includeParam.split(",").map(s => s.trim()).includes(param);
+    }
+    
+    return false;
   }
 }
 

@@ -68,6 +68,7 @@ export class Environment extends EnvironmentBase {
   static serverPort: number;
   static socketPort: number;
   static apiEnv: string;
+  static jwtSecret: string;
 
   static async init(environment: string) {
     let file = "dev.json";
@@ -108,6 +109,7 @@ export class Environment extends EnvironmentBase {
     this.encryptionKey = process.env.ENCRYPTION_KEY || "";
     this.appName = data.appName || "CoreApi";
     this.corsOrigin = process.env.CORS_ORIGIN || data.corsOrigin || "*";
+    this.jwtSecret = process.env.JWT_SECRET || data.jwtSecret || this.encryptionKey || "default-secret";
 
     // Initialize module-specific configs
     this.initializeModuleConfigs(data);
